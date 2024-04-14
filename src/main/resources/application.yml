@@ -1,0 +1,6 @@
+test:
+  envName: 18185
+  projectName: 'db-enc-dec'
+  dbEncDecTestDbType: 'oracle'
+  # jdbc or proxy
+  dbEncDecTestJdbcMode: 'jdbc'

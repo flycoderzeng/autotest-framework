@@ -1,0 +1,187 @@
+cipherPlatform:
+  sm2PubKey: 04DDC4475CA3F84A3E23F276D86E196BADD30DC8DC49B7E5C12C4F5CAC0F76CA50FA9DAFDD13F5173074EF5AE3A8EB53C8872A2B834BC1C3E802714D36EEAB0692
+  sm2PrvKey: 009029F31FD08F35C4B7A0DAA0C284122E7B33C65D26A6F41BD7C094D5E80C6567
+  superAdminUser: super_admin
+  superAdminPassword: olym_2019
+  superCompanyAdminUser: aaaa
+  superCompanyAdminPassword: Abcd1234
+  defaultApplicationId: 65a8f41dfd98fc576cc19886
+  defaultApplicationSecret: 7PxCsdsLOKMadF87K8SSXrlbbK6LPo63
+  master:
+    serverIp: 192.168.18.185
+    serverAdminPort: 8443
+    serverUserPort: 443
+    rootPassword: olym_2019
+
+datasource:
+  cipherPlatform:
+    username: cipherPlatform
+    password: q7SREqPxTTDZ6ZZ$
+    jdbcUrl: jdbc:mysql://192.168.18.185:3306/cipher_platform_metadata?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+    driverClassName: com.mysql.cj.jdbc.Driver
+    maxPoolSize: 300
+    minPoolSize: 10
+  dbEncDec:
+    proxy:
+      mysql:
+        jdbcUrl: jdbc:mysql://192.168.18.22:5000/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        driverClassName: com.mysql.cj.jdbc.Driver
+        username: root
+        password: 123456
+        maxPoolSize: 40
+        minPoolSize: 3
+      mariadb:
+        jdbcUrl: jdbc:mariadb://192.168.18.22:5000/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false
+        driverClassName: org.mariadb.jdbc.Driver
+        username: root
+        password: 123456
+        maxPoolSize: 40
+        minPoolSize: 3
+      openGauss:
+        jdbcUrl: jdbc:opengauss://192.168.18.22:5000/postgres
+        driverClassName: org.opengauss.Driver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      postgresql:
+        jdbcUrl: jdbc:postgresql://127.0.0.1:5000/test?currentSchema=test
+        driverClassName: org.postgresql.Driver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      sqlserver:
+        jdbcUrl: jdbc:sqlserver://127.0.0.1:5000;DatabaseName=test;schemaName=test
+        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      oracle:
+        jdbcUrl: jdbc:oracle:thin:@127.0.0.1:5000:test
+        driverClassName: oracle.jdbc.OracleDriver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      oceanbase:
+        jdbcUrl: jdbc:oceanbase://192.168.18.22:5000/test?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&createDatabaseIfNotExist=true
+        driverClassName: com.oceanbase.jdbc.Driver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+    jdbc:
+      mysql:
+        jdbcUrl: jdbc:dbte:mysql://192.168.17.41:3306/test?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        #jdbcUrl: jdbc:dbte:mysql://192.168.18.222:3306/test?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: admin
+        #username: root
+        password: 123456
+        #password: olym_2023
+        maxPoolSize: 40
+        minPoolSize: 3
+      mariadb:
+        jdbcUrl: jdbc:dbte:mariadb://192.168.18.222:3306/test?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        #jdbcUrl: jdbc:dbte:mariadb://192.168.18.222:3306/test?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: root
+        password: 123456
+        maxPoolSize: 40
+        minPoolSize: 3
+      openGauss:
+        jdbcUrl: jdbc:dbte:opengauss://192.168.18.22:15432/postgres
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: gaussdb
+        password: lhr@123XXT
+        maxPoolSize: 100
+        minPoolSize: 3
+      postgresql:
+        jdbcUrl: jdbc:dbte:postgresql://192.168.18.41:15040/test?currentSchema=test
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: sonar
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      sqlserver:
+        jdbcUrl: jdbc:dbte:sqlserver://127.0.0.1:2433;DatabaseName=test;schemaName=test
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      oracle:
+        #jdbcUrl: jdbc:oracle:thin:@127.0.0.1:1521:test?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources
+        #jdbcUrl: jdbc:oracle:thin:@192.168.18.11:1521:helowin?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources
+        jdbcUrl: jdbc:oracle:thin:@192.168.18.222:1521:helowin?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: test
+        password: test
+        #password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      oceanbase:
+        jdbcUrl: jdbc:oceanbase://192.168.18.222:2881/test?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&createDatabaseIfNotExist=true
+        driverClassName: com.olym.dbte.driver.DbteJdbcDriver
+        username: root
+        password: olym_2023
+        maxPoolSize: 100
+        minPoolSize: 3
+    direct:
+      mysql:
+        jdbcUrl: jdbc:mysql://192.168.17.41:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        #jdbcUrl: jdbc:mysql://192.168.18.222:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+        driverClassName: com.mysql.cj.jdbc.Driver
+        username: admin
+        #username: root
+        password: 123456
+        #password: olym_2023
+        maxPoolSize: 40
+        minPoolSize: 3
+      mariadb:
+        jdbcUrl: jdbc:mariadb://192.168.18.222:49154/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false
+        driverClassName: org.mariadb.jdbc.Driver
+        username: root
+        password: 123456
+        maxPoolSize: 40
+        minPoolSize: 3
+      openGauss:
+        jdbcUrl: jdbc:opengauss://192.168.18.22:15432/postgres
+        driverClassName: org.opengauss.Driver
+        username: gaussdb
+        password: lhr@123XXT
+        maxPoolSize: 100
+        minPoolSize: 3
+      postgresql:
+        jdbcUrl: jdbc:postgresql://192.168.18.41:15040/test?currentSchema=test
+        driverClassName: org.postgresql.Driver
+        username: sonar
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      sqlserver:
+        jdbcUrl: jdbc:sqlserver://127.0.0.1:2433;DatabaseName=test;schemaName=test
+        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+        username: root
+        password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      oracle:
+        jdbcUrl: jdbc:oracle:thin:@192.168.18.222:1521:helowin
+        #jdbcUrl: jdbc:oracle:thin:@192.168.18.11:1521:helowin
+        #jdbcUrl: jdbc:oracle:thin:@127.0.0.1:1521:test
+        driverClassName: oracle.jdbc.OracleDriver
+        username: test
+        password: test
+        #password: 123456
+        maxPoolSize: 100
+        minPoolSize: 3
+      oceanbase:
+        jdbcUrl: jdbc:oceanbase://192.168.18.222:2881/test?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&createDatabaseIfNotExist=true
+        driverClassName: com.oceanbase.jdbc.Driver
+        username: root
+        password: olym_2023
+        maxPoolSize: 100
+        minPoolSize: 3
