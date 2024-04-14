@@ -141,17 +141,8 @@ public class PairwiseTest {
     // 根据接口参数定义生成具体的值
     public static Map<String, Object> getFieldValues(Dict dictApiDefine, Map<String, String> group) {
         log.info("组合详情: {}", JSONObject.toJSONString(group));
-        String expectedResult = "success";
-        for (String value : group.values()) {
-            if(value.startsWith("~")) {
-                expectedResult = "fail";
-                break;
-            }
-        }
-        log.info("预期结果: {}", expectedResult);
 
         Map<String, Object> fieldValues = new HashMap<>();
-        fieldValues.put(EXPECTED_RESULT, expectedResult);
         group.forEach((fieldName, fieldAbstractValue) -> {
             FieldDefine fieldDefine = FIELD_DEFINE_MAP.get(fieldName);
             Object fieldTrueValue = String.copyValueOf(fieldAbstractValue.toCharArray());
@@ -404,7 +395,21 @@ public class PairwiseTest {
         }
 
         log.info("组合数: {}", distinctList.size());
+        for (LinkedHashMap group : distinctList) {
+            String expectedResult = "success";
+            for (Object value : group.values()) {
+                if(((String)value).startsWith("~")) {
+                    expectedResult = "fail";
+                    break;
+                }
+            }
+            group.put(EXPECTED_RESULT, expectedResult);
+        }
+        for (LinkedHashMap group : constraintCounterexampleList) {
+            group.put(EXPECTED_RESULT, "fail");
+        }
         distinctList.addAll(constraintCounterexampleList);
+
         log.info("组合数: {}", distinctList.size());
         log.info("组合详情: {}", JSONObject.toJSONString(distinctList));
         return distinctList;
