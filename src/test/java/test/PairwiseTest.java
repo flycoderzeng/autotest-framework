@@ -397,14 +397,14 @@ public class PairwiseTest {
                                 if(value.startsWith("~")) {
                                     return value;
                                 }
-                                return RandomUtil.randomString(32);
+                                return RandomUtil.randomString(64);
                             }))),
                             ArrayList::new
                     ));
         }
 
+        log.info("组合数: {}", distinctList.size());
         distinctList.addAll(constraintCounterexampleList);
-
         log.info("组合数: {}", distinctList.size());
         log.info("组合详情: {}", JSONObject.toJSONString(distinctList));
         return distinctList;
