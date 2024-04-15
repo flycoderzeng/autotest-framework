@@ -240,7 +240,12 @@ public class PairwiseTest {
             }
             fieldValues.put("$." + fieldName, fieldTrueValue);
         });
+        fieldValues.put(EXPECTED_RESULT, group.get(EXPECTED_RESULT));
+        if(group.get(CASE_DESCRIPTION) != null) {
+            fieldValues.put(CASE_DESCRIPTION, group.get(CASE_DESCRIPTION));
+        }
         log.info("该组合测试点: {}", fieldValues.get(CASE_DESCRIPTION));
+        log.info("该组合预期结果: {}", fieldValues.get(EXPECTED_RESULT));
         log.info("参数取值: {}", JSONObject.toJSON(fieldValues));
         return fieldValues;
     }
