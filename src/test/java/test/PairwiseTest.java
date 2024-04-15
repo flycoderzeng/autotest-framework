@@ -46,11 +46,13 @@ public class PairwiseTest {
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
     public static final String CASE_DESCRIPTION = "__CASE_DESCRIPTION";
     public Dict dictAddMetadata;
+    public Dict dictUpdateMetadata;
     public Dict dictAddStrategy;
 
     @BeforeClass
     public void before() {
         dictAddMetadata = YamlUtil.loadByPath("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\add_metadata.yml");
+        dictUpdateMetadata = YamlUtil.loadByPath("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\update_metadata.yml");
         dictAddStrategy = YamlUtil.loadByPath("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\add_strategy.yml");
     }
 
@@ -58,11 +60,41 @@ public class PairwiseTest {
     public void testAddMetadata(Map<String, String> row) throws Exception {
         Map<String, Object> fieldValues = getFieldValues(dictAddMetadata, row);
         String expectedResult = (String) fieldValues.get(EXPECTED_RESULT);
+        log.info("预期结果: {}", expectedResult);
+        log.info("用例描述: {}", row.get(CASE_DESCRIPTION));
 
         new BaseAutoCaseBuilder(UserTestContext.getInstance())
                 .updateVariable(fieldValues)
                 .updateVariable("expectedResult", expectedResult)
                 .postWithCompanySuperAdmin("添加元数据", "/database_meta/metadata/v2/add", "{\n" +
+                        "                         \"databaseName\": \"${$.databaseName}\",\n" +
+                        "                         \"schemaName\": \"${$.schemaName}\",\n" +
+                        "                         \"databaseType\": \"${$.databaseType}\",\n" +
+                        "                         \"tableName\": \"${$.tableName}\",\n" +
+                        "                         \"columnName\": \"${$.columnName}\",\n" +
+                        "                         \"columnType\": \"${$.columnType}\"\n" +
+                        "                     }")
+                .beginIf("如果预期成功", "${expectedResult} == 'success'")
+                .assertSuccess()
+                .endIf("预期成功结束")
+                .beginIf("如果预期失败", "${expectedResult} == 'fail'")
+                .assertFail()
+                .endIf("预期失败结束")
+                .run();
+    }
+
+    @Test(testName = "测试修改元数据", dataProvider = "allUpdateMetadataRows")
+    public void testUpdateMetadata(Map<String, String> row) throws Exception {
+        Map<String, Object> fieldValues = getFieldValues(dictUpdateMetadata, row);
+        String expectedResult = (String) fieldValues.get(EXPECTED_RESULT);
+        log.info("预期结果: {}", expectedResult);
+        log.info("用例描述: {}", row.get(CASE_DESCRIPTION));
+
+        new BaseAutoCaseBuilder(UserTestContext.getInstance())
+                .updateVariable(fieldValues)
+                .updateVariable("expectedResult", expectedResult)
+                .postWithCompanySuperAdmin("修改元数据", "/database_meta/metadata/v2/update", "{\n" +
+                        "                         \"metadataStructureId\": \"${$.metadataStructureId}\",\n" +
                         "                         \"databaseName\": \"${$.databaseName}\",\n" +
                         "                         \"schemaName\": \"${$.schemaName}\",\n" +
                         "                         \"databaseType\": \"${$.databaseType}\",\n" +
@@ -121,6 +153,11 @@ public class PairwiseTest {
     @DataProvider(name = "allMetadataRows")
     public Object[][] getAllMetadataRows() throws Exception {
         return getMetadataProviderObjects("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\add_metadata.yml");
+    }
+
+    @DataProvider(name = "allUpdateMetadataRows")
+    public Object[][] getAllUpdateMetadataRows() throws Exception {
+        return getMetadataProviderObjects("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\update_metadata.yml");
     }
 
     @DataProvider(name = "allStrategyRows")
@@ -214,7 +251,7 @@ public class PairwiseTest {
             }
             if(ReUtil.isMatch(StepNode.TEMPLATE_CASE_VARIABLE_PATTERN, fieldAbstractValue)) {
                 String modelDataPath = fieldAbstractValue.substring(2, fieldAbstractValue.length() - 1);
-                log.info("元数据路径: {}", modelDataPath);
+                log.trace("元数据路径: {}", modelDataPath);
                 ModelDataDefine modelDataDefine = dictApiDefine.getByPath(modelDataPath, ModelDataDefine.class);
                 if(modelDataDefine == null) {
                     throw new RuntimeException("缺少[" + modelDataPath + "] model data定义");
@@ -222,6 +259,7 @@ public class PairwiseTest {
                 Connection connection = null;
                 try {
                     connection = UserTestContext.getInstance().getConnection(modelDataDefine.getDatasource());
+                    log.info("SQL: {}", modelDataDefine.getSql());
                     List<Map<String, Object>> maps = JDBCUtils.doQuery(connection, modelDataDefine.getSql());
                     log.info("SQL执行结果: {}", JSONObject.toJSONString(maps));
                     fieldTrueValue = JsonPath.read(maps, modelDataDefine.getExtractPath());
@@ -271,7 +309,8 @@ public class PairwiseTest {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, TimeoutException {
-        generateTestGroups("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\add_strategy.yml");
+        generateTestGroups("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\update_metadata.yml");
+        //generateTestGroups("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\add_strategy.yml");
         //generateTestGroups("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\add_metadata.yml");
     }
 
@@ -289,29 +328,51 @@ public class PairwiseTest {
         });
 
         log.info("参数的取值: {}", JSONObject.toJSON(fieldValuesMap));
-        StringBuilder builder = new StringBuilder();
         List<String> fieldNames = new ArrayList<>();
         fieldValuesMap.forEach((k, v) -> {
             fieldNames.add(k);
-            builder.append(k).append(": ").append(StringUtils.join(v, ",")).append("\r\n");
+        });
+
+        StringBuilder builder1 = new StringBuilder();
+        fieldValuesMap.forEach((k, v) -> {
+            if(requiredFields.indexOf(k) > -1) {
+                List<Object> values = new ArrayList<>();
+                for (Object o : v) {
+                    if(!StringUtils.equals("~NULL", (String) o) && !StringUtils.equals("~EMPTY", (String) o)
+                            && !StringUtils.equals("~MAXLENGTH_PLUS", (String) o)
+                            && !StringUtils.equals("~MINLENGTH_SUB", (String) o)
+                            && !StringUtils.equals("~MAX_PLUS", (String) o)
+                            && !StringUtils.equals("~MIN_SUB", (String) o)
+                    ) {
+                        values.add(o);
+                    }
+                }
+                builder1.append(k).append(": ").append(StringUtils.join(values, ",")).append("\r\n");
+            } else {
+                builder1.append(k).append(": ").append(StringUtils.join(v, ",")).append("\r\n");
+            }
         });
 
         String fileName = "complete_" + new File(apiDefineYmlPath).getName().replaceAll(".yml", ".txt");
         // 生成全量组合
-        final List<LinkedHashMap> completeGroups = getPictGroups(fileName, builder, fieldNames, "2");
+        final List<LinkedHashMap> completeGroups = getPictGroups(fileName, builder1, fieldNames, "2");
         log.info("全量组合大小: {}", completeGroups.size());
 
+        StringBuilder builder2 = new StringBuilder();
+        fieldValuesMap.forEach((k, v) -> {
+            builder2.append(k).append(": ").append(StringUtils.join(v, ",")).append("\r\n");
+        });
         // 处理约束
         List<String> constraints = dict.getByPath("constraints");
         if(constraints != null && !constraints.isEmpty()) {
-            builder.append("\r\n");
+            builder2.append("\r\n");
             for (String constraint : constraints) {
-                builder.append(constraint).append(";\r\n");
+                builder2.append(constraint).append(";\r\n");
             }
         }
 
         fileName = new File(apiDefineYmlPath).getName().replaceAll(".yml", ".txt");
-        final List<LinkedHashMap> groups = getPictGroups(fileName, builder, fieldNames, "1");
+        final List<LinkedHashMap> groups = getPictGroups(fileName, builder1, fieldNames, "1");
         List<LinkedHashMap> distinctList = groups;
 
         for (int i = 0; i < fieldNames.size(); i++) {
@@ -336,38 +397,65 @@ public class PairwiseTest {
                 for (int i = 0; i < constraints.size(); i++) {
                     String constraint = constraints.get(i);
                     int trueCount = 0;
-                    int falseCount = 0;
+                    int currFalseCount = 0;
+                    int otherFalseCount = 0;
+                    int notSatisfiedIf = 0;
+                    CharStream input = CharStreams.fromString(constraint);
+                    ConstraintsLexer lexer = new ConstraintsLexer(input);
+                    CommonTokenStream tokens = new CommonTokenStream(lexer);
+                    ConstraintsParser parser = new ConstraintsParser(tokens);
+                    ConstraintsParser.ExpressionContext context = parser.expression();
+                    ConstraintsVisitor visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraint, group);
+                    try {
+                        final Boolean visitResult = (Boolean) visitor.visit(context);
+                        if(visitResult) {
+                            trueCount++;
+                        } else {
+                            currFalseCount++;
+                        }
+                    } catch (Exception e) {
+                        log.trace(e.getMessage());
+                        notSatisfiedIf++;
+                    }
+                    if(currFalseCount < 1) {
+                        continue;
+                    }
+
                     for (int j = 0; j < constraints.size(); j++) {
-                        CharStream input = CharStreams.fromString(constraint);
-                        ConstraintsLexer lexer = new ConstraintsLexer(input);
-                        CommonTokenStream tokens = new CommonTokenStream(lexer);
-                        ConstraintsParser parser = new ConstraintsParser(tokens);
-                        ConstraintsParser.ExpressionContext context = parser.expression();
-                        ConstraintsVisitor visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraint, group);
                         try {
-                            final Boolean visitResult = (Boolean) visitor.visit(context);
-                            if(j != i && visitResult) {
-                                trueCount++;
-                            } else {
-                                if (!visitResult) {
-                                    falseCount++;
+                            if(j != i) {
+                                input = CharStreams.fromString(constraint);
+                                lexer = new ConstraintsLexer(input);
+                                tokens = new CommonTokenStream(lexer);
+                                parser = new ConstraintsParser(tokens);
+                                context = parser.expression();
+                                visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraints.get(j), group);
+                                final Boolean visitResult = (Boolean) visitor.visit(context);
+                                if(visitResult) {
+                                    trueCount++;
+                                } else {
+                                    otherFalseCount++;
                                 }
                             }
                         } catch (Exception e) {
                             log.trace(e.getMessage());
+                            notSatisfiedIf++;
                         }
                     }
-                    if(trueCount == constraints.size() - 1 && falseCount == 1) {
+                    if((trueCount + notSatisfiedIf + otherFalseCount) == (constraints.size() - 1) && currFalseCount == 1) {
+                        group.put(CASE_DESCRIPTION, "违反约束: " + constraint);
                         constraintCounterexampleList.add(group);
                     }
                 }
             }
         }
+        log.info("约束反例大小: {}", constraintCounterexampleList.size());
         constraintCounterexampleList = constraintCounterexampleList.stream()
                 .collect(Collectors.collectingAndThen(
                         Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(m -> m.hashCode()))),
                         ArrayList::new
                 ));
+        log.info("约束反例大小: {}", constraintCounterexampleList.size());
         constraintCounterexampleList = constraintCounterexampleList.stream()
                 .collect(Collectors.collectingAndThen(
                         Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(m -> {

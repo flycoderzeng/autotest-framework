@@ -1,0 +1,93 @@
+description: "修改元数据"
+type: object
+required:
+  - metadataStructureId
+  - databaseName
+  - databaseType
+  - tableName
+  - columnName
+  - columnType
+properties:
+  metadataStructureId:
+    description: "元数据id"
+    type: string
+    enums:
+      - ${modelData.defaultMetadata}
+  databaseName:
+    description: "数据库名称"
+    type: string
+    minLength: 1
+    maxLength: 64
+    example: "test"
+  schemaName:
+    description: "数据库模式"
+    type: string
+    minLength: 1
+    maxLength: 64
+    example: "test"
+  databaseType:
+    description: "数据库类型"
+    type: string
+    enums:
+      - Mysql
+      - Oracle
+      - SQL_Server
+      - PostSql
+      - kingbasees
+      - dm
+      - openGauss
+      - vertica
+    example: "Oracle"
+  tableName:
+    description: "表名称"
+    type: string
+    minLength: 1
+    maxLength: 120
+    example: "test_users"
+  columnName:
+    description: "字段名称"
+    type: string
+    minLength: 1
+    maxLength: 120
+    example: "card_no"
+  columnType:
+    description: "字段类型"
+    type: string
+    enums:
+      - BIGINT
+      - CHAR
+      - DATETIME
+      - DECIMAL
+      - DOUBLE
+      - INT
+      - INTEGER
+      - LONGTEXT
+      - TEXT
+      - VARCHAR
+      - CLOB
+      - LONG
+      - NUMBER
+      - TIMESTAMP
+      - VARCHAR2
+      - DATETIME2
+      - FLOAT
+      - NUMERIC
+      - CHARACTER
+      - DOUBLE
+      - TIMESTAMPTZ
+    example: "VARCHAR"
+constraints:
+  - IF [databaseType] = "Mysql" THEN [columnType] IN {"BIGINT","CHAR","DATETIME","DECIMAL","DOUBLE","INT","INTEGER","LONGTEXT","TEXT","VARCHAR"}
+  - IF [databaseType] = "Oracle" THEN [columnType] IN {"CHAR","CLOB","LONG","NUMBER","TIMESTAMP","VARCHAR2","NULL"}
+  - IF [databaseType] = "SQL_Server" THEN [columnType] IN {"BIGINT","CHAR","DATETIME","DATETIME2","DECIMAL","FLOAT","INT","NUMERIC","TEXT","VARCHAR"}
+  - IF [databaseType] = "PostSql" THEN [columnType] IN {"BIGINT","CHARACTER","DOUBLE","INT","INTEGER","TEXT","TIMESTAMP","TIMESTAMPTZ","VARCHAR"}
+  - IF [databaseType] = "kingbasees" THEN [columnType] IN {"BIGINT","CHARACTER","DOUBLE","INT","INTEGER","TEXT","TIMESTAMP","TIMESTAMPTZ","VARCHAR"}
+  - IF [databaseType] = "dm" THEN [columnType] IN {"CHAR","CLOB","LONG","NUMBER","TIMESTAMP","VARCHAR2"}
+  - IF [databaseType] = "openGauss" THEN [columnType] IN {"BIGINT","CHARACTER","DOUBLE","INT","INTEGER","TEXT","TIMESTAMP","TIMESTAMPTZ","VARCHAR"}
+  - IF [databaseType] = "vertica" THEN [columnType] IN {"BIGINT","CHARACTER","DOUBLE","INT","INTEGER","TEXT","TIMESTAMP","TIMESTAMPTZ","VARCHAR"}
+
+modelData:
+  defaultMetadata:
+    datasource: datasource.cipherPlatform
+    sql: select * from cipher_platform_metadata.t_database_metadata where column_type='VARCHAR' and del_flag=0 and metadata_structure_id not in (select metadata_structure_id from cipher_platform_metadata.t_database_application_metadata where del_flag=0) ORDER BY RAND() limit 1
+    extractPath: $.[0].metadata_structure_id
