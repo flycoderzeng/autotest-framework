@@ -357,7 +357,7 @@ public class PairwiseTest {
                             log.trace(e.getMessage());
                         }
                     }
-                    if(trueCount == constraints.size() - 1 && falseCount < 2) {
+                    if(trueCount == constraints.size() - 1 && falseCount == 1) {
                         constraintCounterexampleList.add(group);
                     }
                 }
