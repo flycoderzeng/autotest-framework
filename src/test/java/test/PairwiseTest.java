@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
-import static com.autotest.framework.utils.PairwiseTest.*;
+import static com.autotest.framework.utils.PairwiseTestUtils.*;
 
 @Slf4j
 @SpringBootTest(classes = {PairwiseTest.class})

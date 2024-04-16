@@ -33,7 +33,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class PairwiseTest {
+public class PairwiseTestUtils {
     public static final String SEEDS = "QWERTYUIOPASDFGHJKLZXCVBNM_qwertyuiopasdfghjklzxcvbnm_1234567890_中文哈哈哈";
     public static final String PICT_FOLDER_DIR = "C:\\Users\\zengb\\Documents\\pict\\";
     public static final Map<String, FieldDefine> FIELD_DEFINE_MAP = new HashMap<>();
