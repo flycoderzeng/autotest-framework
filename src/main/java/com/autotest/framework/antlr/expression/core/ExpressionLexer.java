@@ -1,7 +1,7 @@
 // Generated from E:/java/workspace/db-enc-dec-autotest/src/test/java\Expression.g4 by ANTLR 4.12.0
 
 // 定义package
-package com.autotest.framework.antlr.expression;
+package com.autotest.framework.antlr.expression.core;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATN;
