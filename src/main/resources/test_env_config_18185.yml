@@ -11,7 +11,7 @@ cipherPlatform:
     serverIp: 192.168.18.185
     serverAdminPort: 8443
     serverUserPort: 443
-    rootPassword: olym_2019
+    rootPassword: 123456
 
 datasource:
   cipherPlatform:
@@ -78,9 +78,7 @@ datasource:
         #jdbcUrl: jdbc:dbte:mysql://192.168.18.222:3306/test?dbteConfig=E:/java/workspace/db-enc-dec-autotest/src/main/resources&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
         driverClassName: com.olym.dbte.driver.DbteJdbcDriver
         username: admin
-        #username: root
         password: 123456
-        #password: olym_2023
         maxPoolSize: 40
         minPoolSize: 3
       mariadb:
@@ -95,7 +93,7 @@ datasource:
         jdbcUrl: jdbc:dbte:opengauss://192.168.18.22:15432/postgres
         driverClassName: com.olym.dbte.driver.DbteJdbcDriver
         username: gaussdb
-        password: lhr@123XXT
+        password: 123456
         maxPoolSize: 100
         minPoolSize: 3
       postgresql:
@@ -119,14 +117,13 @@ datasource:
         driverClassName: com.olym.dbte.driver.DbteJdbcDriver
         username: test
         password: test
-        #password: 123456
         maxPoolSize: 100
         minPoolSize: 3
       oceanbase:
         jdbcUrl: jdbc:oceanbase://192.168.18.222:2881/test?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&createDatabaseIfNotExist=true
         driverClassName: com.olym.dbte.driver.DbteJdbcDriver
         username: root
-        password: olym_2023
+        password: 123456
         maxPoolSize: 100
         minPoolSize: 3
     direct:
@@ -135,9 +132,7 @@ datasource:
         #jdbcUrl: jdbc:mysql://192.168.18.222:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
         driverClassName: com.mysql.cj.jdbc.Driver
         username: admin
-        #username: root
         password: 123456
-        #password: olym_2023
         maxPoolSize: 40
         minPoolSize: 3
       mariadb:
@@ -151,7 +146,7 @@ datasource:
         jdbcUrl: jdbc:opengauss://192.168.18.22:15432/postgres
         driverClassName: org.opengauss.Driver
         username: gaussdb
-        password: lhr@123XXT
+        password: 123456
         maxPoolSize: 100
         minPoolSize: 3
       postgresql:
@@ -175,13 +170,12 @@ datasource:
         driverClassName: oracle.jdbc.OracleDriver
         username: test
         password: test
-        #password: 123456
         maxPoolSize: 100
         minPoolSize: 3
       oceanbase:
         jdbcUrl: jdbc:oceanbase://192.168.18.222:2881/test?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&createDatabaseIfNotExist=true
         driverClassName: com.oceanbase.jdbc.Driver
         username: root
-        password: olym_2023
+        password: 123456
         maxPoolSize: 100
         minPoolSize: 3
