@@ -372,7 +372,7 @@ public class PairwiseTest {
         }
 
         fileName = new File(apiDefineYmlPath).getName().replaceAll(".yml", ".txt");
-        final List<LinkedHashMap> groups = getPictGroups(fileName, builder1, fieldNames, "1");
+        final List<LinkedHashMap> groups = getPictGroups(fileName, builder2, fieldNames, "1");
         List<LinkedHashMap> distinctList = groups;
 
         for (int i = 0; i < fieldNames.size(); i++) {
