@@ -15,16 +15,16 @@ import java.util.Map;
 @Slf4j
 public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
     // 接口定义
-    private Dict apiDict;
+    private final Dict apiDict;
     // 接口参数取值
-    private Map<String, List> fieldValuesMap;
+    private final Map<String, List<String>> fieldValuesMap;
     // 约束
-    private String constraint;
+    private final String constraint;
     // 用例组合
-    private LinkedHashMap group;
+    private final LinkedHashMap<String, String> group;
     private String stage = "begin";
 
-    public ConstraintsVisitor(Dict apiDict, Map<String, List> fieldValuesMap, String constraint, LinkedHashMap group) {
+    public ConstraintsVisitor(Dict apiDict, Map<String, List<String>> fieldValuesMap, String constraint, LinkedHashMap<String, String> group) {
         this.apiDict = apiDict;
         this.fieldValuesMap = fieldValuesMap;
         this.constraint = constraint;
@@ -43,22 +43,18 @@ public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
         }
         left = left.substring(1, left.length() - 1);
         right = right.substring(1, right.length() - 1);
-        final String leftString = (String) group.get(left);
+        final String leftString = group.get(left);
         switch (ctx.op.getType()) {
             case ConstraintsLexer.EQUAL -> {
-                if(StringUtils.equals(leftString, right)) {
-                    return true;
-                }
-                return false;
+                return StringUtils.equals(leftString, right);
             }
             case ConstraintsLexer.NOT_EQUAL -> {
-                if(StringUtils.equals(leftString, right)) {
-                    return false;
-                }
-                return true;
+                return !StringUtils.equals(leftString, right);
+            }
+            default -> {
+                return false;
             }
         }
-        return super.visitCompareString(ctx);
     }
 
     @Override

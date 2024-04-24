@@ -6,6 +6,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.setting.yaml.YamlUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import com.autotest.framework.antlr.constraint.core.ConstraintsLexer;
 import com.autotest.framework.antlr.constraint.core.ConstraintsParser;
 import com.autotest.framework.antlr.constraint.visitor.ConstraintsVisitor;
@@ -24,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -41,28 +41,26 @@ public class PairwiseTestUtils {
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
     public static final String CASE_DESCRIPTION = "__CASE_DESCRIPTION";
 
-    public static List<LinkedHashMap> generateTestGroups(String apiDefineYmlName) throws IOException, InterruptedException, TimeoutException {
+    public static List<LinkedHashMap<String, String>> generateTestGroups(String apiDefineYmlName) throws IOException, InterruptedException, TimeoutException {
         Dict dict = YamlUtil.loadByPath(getApiDefineYmlPath(apiDefineYmlName));
-        Map<String, List> fieldValuesMap = new LinkedHashMap<>();
+        Map<String, List<String>> fieldValuesMap = new LinkedHashMap<>();
 
         generateFieldValues(dict, fieldValuesMap, "", "");
 
         List<String> requiredFields = new ArrayList<>();
         fieldValuesMap.forEach((k, v) -> {
-            if(v.indexOf("~NULL") > -1 || v.indexOf("~EMPTY") > -1) {
+            if(v.contains("~NULL") || v.contains("~EMPTY")) {
                 requiredFields.add(k);
             }
         });
 
-        log.info("参数的取值: {}", JSONObject.toJSON(fieldValuesMap));
+        log.info("参数的取值: {}", JSON.toJSONString(fieldValuesMap));
         List<String> fieldNames = new ArrayList<>();
-        fieldValuesMap.forEach((k, v) -> {
-            fieldNames.add(k);
-        });
+        fieldValuesMap.forEach((k, v) -> fieldNames.add(k));
 
         StringBuilder builder1 = new StringBuilder();
         fieldValuesMap.forEach((k, v) -> {
-            if(requiredFields.indexOf(k) > -1) {
+            if(requiredFields.contains(k)) {
                 List<Object> values = new ArrayList<>();
                 for (Object o : v) {
                     if(!StringUtils.equals("~NULL", (String) o) && !StringUtils.equals("~EMPTY", (String) o)
@@ -82,7 +80,7 @@ public class PairwiseTestUtils {
 
         String fileName = "complete_" + apiDefineYmlName.replaceAll(".yml", ".txt");
         // 生成全量组合
-        final List<LinkedHashMap> completeGroups = getPictGroups(fileName, builder1, fieldNames, "2");
+        final List<LinkedHashMap<String, String>> completeGroups = getPictGroups(fileName, builder1, fieldNames, "2");
         log.info("全量组合大小: {}", completeGroups.size());
 
         StringBuilder builder2 = new StringBuilder();
@@ -99,8 +97,8 @@ public class PairwiseTestUtils {
         }
 
         fileName = apiDefineYmlName.replaceAll(".yml", ".txt");
-        final List<LinkedHashMap> groups = getPictGroups(fileName, builder2, fieldNames, "1");
-        List<LinkedHashMap> distinctList = groups;
+        final List<LinkedHashMap<String, String>> groups = getPictGroups(fileName, builder2, fieldNames, "1");
+        List<LinkedHashMap<String, String>> distinctList = groups;
 
         for (int i = 0; i < fieldNames.size(); i++) {
             final String key = fieldNames.get(i);
@@ -117,10 +115,10 @@ public class PairwiseTestUtils {
                     ));
         }
 
-        List<LinkedHashMap> constraintCounterexampleList = new ArrayList<>();
+        List<LinkedHashMap<String, String>> constraintCounterexampleList = new ArrayList<>();
 
         if(constraints != null && !constraints.isEmpty()) {
-            for (LinkedHashMap group : completeGroups) {
+            for (LinkedHashMap<String, String> group : completeGroups) {
                 for (int i = 0; i < constraints.size(); i++) {
                     String constraint = constraints.get(i);
                     int trueCount = 0;
@@ -135,7 +133,7 @@ public class PairwiseTestUtils {
                     ConstraintsVisitor visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraint, group);
                     try {
                         final Boolean visitResult = (Boolean) visitor.visit(context);
-                        if(visitResult) {
+                        if(Boolean.TRUE.equals(visitResult)) {
                             trueCount++;
                         } else {
                             currFalseCount++;
@@ -158,7 +156,7 @@ public class PairwiseTestUtils {
                                 context = parser.expression();
                                 visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraints.get(j), group);
                                 final Boolean visitResult = (Boolean) visitor.visit(context);
-                                if(visitResult) {
+                                if(Boolean.TRUE.equals(visitResult)) {
                                     trueCount++;
                                 } else {
                                     otherFalseCount++;
@@ -169,7 +167,7 @@ public class PairwiseTestUtils {
                             notSatisfiedIf++;
                         }
                     }
-                    if((trueCount + notSatisfiedIf + otherFalseCount) == (constraints.size() - 1) && currFalseCount == 1) {
+                    if(trueCount + notSatisfiedIf + otherFalseCount == constraints.size() - 1) {
                         group.put(CASE_DESCRIPTION, "违反约束: " + constraint);
                         constraintCounterexampleList.add(group);
                     }
@@ -179,7 +177,7 @@ public class PairwiseTestUtils {
         log.info("约束反例大小: {}", constraintCounterexampleList.size());
         constraintCounterexampleList = constraintCounterexampleList.stream()
                 .collect(Collectors.collectingAndThen(
-                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(m -> m.hashCode()))),
+                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Map::hashCode))),
                         ArrayList::new
                 ));
         log.info("约束反例大小: {}", constraintCounterexampleList.size());
@@ -197,7 +195,7 @@ public class PairwiseTestUtils {
                         ArrayList::new
                 ));
         log.info("约束反例大小: {}", constraintCounterexampleList.size());
-        log.info("约束反例详情: {}", JSONObject.toJSONString(constraintCounterexampleList));
+        log.info("约束反例详情: {}", JSON.toJSONString(constraintCounterexampleList));
 
         for (int i = 0; i < fieldNames.size(); i++) {
             final String key = fieldNames.get(i);
@@ -215,7 +213,7 @@ public class PairwiseTestUtils {
         }
 
         log.info("组合数: {}", distinctList.size());
-        for (LinkedHashMap group : distinctList) {
+        for (LinkedHashMap<String, String> group : distinctList) {
             String expectedResult = "success";
             for (Object value : group.values()) {
                 if(((String)value).startsWith("~")) {
@@ -225,17 +223,18 @@ public class PairwiseTestUtils {
             }
             group.put(EXPECTED_RESULT, expectedResult);
         }
-        for (LinkedHashMap group : constraintCounterexampleList) {
+        for (LinkedHashMap<String, String> group : constraintCounterexampleList) {
             group.put(EXPECTED_RESULT, "fail");
         }
         distinctList.addAll(constraintCounterexampleList);
 
         log.info("组合数: {}", distinctList.size());
-        log.info("组合详情: {}", JSONObject.toJSONString(distinctList));
+        log.info("组合详情: {}", JSON.toJSONString(distinctList));
+
         return distinctList;
     }
 
-    public static List<LinkedHashMap> getPictGroups(String fileName, StringBuilder builder, List<String> fieldNames, String o) throws IOException, InterruptedException, TimeoutException {
+    public static List<LinkedHashMap<String, String>> getPictGroups(String fileName, StringBuilder builder, List<String> fieldNames, String o) throws IOException, InterruptedException, TimeoutException {
         FileUtil.writeBytes(builder.toString().getBytes(StandardCharsets.UTF_8), PICT_FOLDER_DIR + fileName);
         String output = new ProcessExecutor().command(PICT_FOLDER_DIR + "\\pict.exe", PICT_FOLDER_DIR + fileName, "-o:"+o)
                 .readOutput(true).execute()
@@ -252,7 +251,7 @@ public class PairwiseTestUtils {
         }
 
         // 用例组合列表
-        List<LinkedHashMap> groups = new ArrayList<>();
+        List<LinkedHashMap<String, String>> groups = new ArrayList<>();
 
         for (int i = lineNo+1; i < lines.length; i++) {
             String[] values = lines[i].split("\t");
@@ -272,7 +271,7 @@ public class PairwiseTestUtils {
         return dictPrefixPath + "." + name;
     }
 
-    public static void generateFieldValues(Dict dict, Map<String, List> fieldValuesMap, String dictPrefixPath, String fieldPrefixPath) {
+    public static void generateFieldValues(Dict dict, Map<String, List<String>> fieldValuesMap, String dictPrefixPath, String fieldPrefixPath) {
         String type = dict.getByPath(getDictPath(dictPrefixPath, "type"));
         if(StringUtils.equals(type, "object")) {
             List<String> requiredFields = dict.getByPath(getDictPath(dictPrefixPath, "required"));
@@ -300,13 +299,13 @@ public class PairwiseTestUtils {
             }
         } else {
             Boolean must = dict.getByPath(getDictPath(dictPrefixPath, "must"));
-            if(must != null && must == true) {
-                generateField(fieldValuesMap, "", Arrays.asList(fieldPrefixPath), fieldPrefixPath, dict.getByPath(dictPrefixPath));
+            if(must != null && must) {
+                generateField(fieldValuesMap, "", Collections.singletonList(fieldPrefixPath), fieldPrefixPath, dict.getByPath(dictPrefixPath));
             }
         }
     }
 
-    public static void generateField(Map<String, List> fieldValuesMap, String fieldPrefixPath, List<String> requiredFields, Object fieldName, LinkedHashMap properties) {
+    public static void generateField(Map<String, List<String>> fieldValuesMap, String fieldPrefixPath, List<String> requiredFields, Object fieldName, LinkedHashMap properties) {
         List<String> values = new ArrayList<>();
         if(requiredFields == null) {
             requiredFields = new ArrayList<>();
@@ -355,12 +354,12 @@ public class PairwiseTestUtils {
             }
             values.add("VALID");
         }
-        FIELD_DEFINE_MAP.put(fieldPrefixPath + fieldName, JSONObject.parseObject(JSONObject.toJSONString(properties), FieldDefine.class));
+        FIELD_DEFINE_MAP.put(fieldPrefixPath + fieldName, JSON.parseObject(JSON.toJSONString(properties), FieldDefine.class));
         fieldValuesMap.put(fieldPrefixPath + fieldName, values);
     }
 
     public static Object[][] getApiProviderObjects(String apiDefineYmlPath) throws Exception {
-        List<LinkedHashMap> testGroups = generateTestGroups(apiDefineYmlPath);
+        List<LinkedHashMap<String, String>> testGroups = generateTestGroups(apiDefineYmlPath);
 
         Object[][] objects = new Object[testGroups.size()][1];
         for (int i = 0; i < testGroups.size(); i++) {
@@ -371,7 +370,7 @@ public class PairwiseTestUtils {
 
     // 根据接口参数定义生成具体的值
     public static Map<String, Object> getFieldValues(Dict dictApiDefine, Map<String, String> group) {
-        log.info("组合详情: {}", JSONObject.toJSONString(group));
+        log.info("组合详情: {}", JSON.toJSONString(group));
 
         Map<String, Object> fieldValues = new HashMap<>();
         group.forEach((fieldName, fieldAbstractValue) -> {
@@ -478,20 +477,12 @@ public class PairwiseTestUtils {
         }
         log.info("该组合测试点: {}", fieldValues.get(CASE_DESCRIPTION));
         log.info("该组合预期结果: {}", fieldValues.get(EXPECTED_RESULT));
-        log.info("参数取值: {}", JSONObject.toJSON(fieldValues));
+        log.info("参数取值: {}", JSON.toJSONString(fieldValues));
         return fieldValues;
     }
 
     public static String getApiDefineYmlPath(String fileName) {
-        List<File> files = FileUtil.loopFiles(System.getProperty("user.dir"), new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                if(pathname.getName().equals(fileName)) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        List<File> files = FileUtil.loopFiles(System.getProperty("user.dir"), pathname -> pathname.getName().equals(fileName));
         if(files != null && !files.isEmpty()) {
             return files.get(0).getAbsolutePath();
         }
