@@ -1,10 +1,13 @@
 package test;
 
+import cn.hutool.core.util.ReUtil;
 import com.mifmif.common.regex.Generex;
 import com.mifmif.common.regex.util.Iterator;
 import nl.flotsam.xeger.Xeger;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegexTest {
     public static void main(String[] args) {
@@ -27,5 +30,9 @@ public class RegexTest {
         while (iterator.hasNext()) {
             System.out.print(iterator.next() + " ");
         }
+        System.out.println("===>");
+        System.out.println("===>");
+
+        System.out.println(ReUtil.getGroup1(".+[ \t\r\n]+(.+\\..+)[ \r\n\t]*", "select * from test.aa").split("aaaaa")[0]);
     }
 }

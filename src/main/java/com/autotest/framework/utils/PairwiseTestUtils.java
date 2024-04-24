@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
@@ -40,8 +41,8 @@ public class PairwiseTestUtils {
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
     public static final String CASE_DESCRIPTION = "__CASE_DESCRIPTION";
 
-    public static List<LinkedHashMap> generateTestGroups(String apiDefineYmlPath) throws IOException, InterruptedException, TimeoutException {
-        Dict dict = YamlUtil.loadByPath(apiDefineYmlPath);
+    public static List<LinkedHashMap> generateTestGroups(String apiDefineYmlName) throws IOException, InterruptedException, TimeoutException {
+        Dict dict = YamlUtil.loadByPath(getApiDefineYmlPath(apiDefineYmlName));
         Map<String, List> fieldValuesMap = new LinkedHashMap<>();
 
         generateFieldValues(dict, fieldValuesMap, "", "");
@@ -79,7 +80,7 @@ public class PairwiseTestUtils {
             }
         });
 
-        String fileName = "complete_" + new File(apiDefineYmlPath).getName().replaceAll(".yml", ".txt");
+        String fileName = "complete_" + apiDefineYmlName.replaceAll(".yml", ".txt");
         // 生成全量组合
         final List<LinkedHashMap> completeGroups = getPictGroups(fileName, builder1, fieldNames, "2");
         log.info("全量组合大小: {}", completeGroups.size());
@@ -97,7 +98,7 @@ public class PairwiseTestUtils {
             }
         }
 
-        fileName = new File(apiDefineYmlPath).getName().replaceAll(".yml", ".txt");
+        fileName = apiDefineYmlName.replaceAll(".yml", ".txt");
         final List<LinkedHashMap> groups = getPictGroups(fileName, builder2, fieldNames, "1");
         List<LinkedHashMap> distinctList = groups;
 
@@ -358,7 +359,7 @@ public class PairwiseTestUtils {
         fieldValuesMap.put(fieldPrefixPath + fieldName, values);
     }
 
-    public static Object[][] getMetadataProviderObjects(String apiDefineYmlPath) throws Exception {
+    public static Object[][] getApiProviderObjects(String apiDefineYmlPath) throws Exception {
         List<LinkedHashMap> testGroups = generateTestGroups(apiDefineYmlPath);
 
         Object[][] objects = new Object[testGroups.size()][1];
@@ -479,5 +480,21 @@ public class PairwiseTestUtils {
         log.info("该组合预期结果: {}", fieldValues.get(EXPECTED_RESULT));
         log.info("参数取值: {}", JSONObject.toJSON(fieldValues));
         return fieldValues;
+    }
+
+    public static String getApiDefineYmlPath(String fileName) {
+        List<File> files = FileUtil.loopFiles(System.getProperty("user.dir"), new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if(pathname.getName().equals(fileName)) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        if(files != null && !files.isEmpty()) {
+            return files.get(0).getAbsolutePath();
+        }
+        return null;
     }
 }

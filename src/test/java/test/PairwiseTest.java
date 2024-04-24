@@ -25,9 +25,9 @@ public class PairwiseTest {
 
     @BeforeClass
     public void before() {
-        dictAddMetadata = YamlUtil.loadByPath("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\add_metadata.yml");
-        dictUpdateMetadata = YamlUtil.loadByPath("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\update_metadata.yml");
-        dictAddStrategy = YamlUtil.loadByPath("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\add_strategy.yml");
+        dictAddMetadata = YamlUtil.loadByPath(getApiDefineYmlPath("add_metadata.yml"));
+        dictUpdateMetadata = YamlUtil.loadByPath(getApiDefineYmlPath("update_metadata.yml"));
+        dictAddStrategy = YamlUtil.loadByPath(getApiDefineYmlPath("add_strategy.yml"));
     }
 
     @Test(testName = "测试添加元数据", dataProvider = "allMetadataRows")
@@ -126,22 +126,22 @@ public class PairwiseTest {
 
     @DataProvider(name = "allMetadataRows")
     public Object[][] getAllMetadataRows() throws Exception {
-        return getMetadataProviderObjects("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\add_metadata.yml");
+        return getApiProviderObjects(getApiDefineYmlPath("add_metadata.yml"));
     }
 
     @DataProvider(name = "allUpdateMetadataRows")
     public Object[][] getAllUpdateMetadataRows() throws Exception {
-        return getMetadataProviderObjects("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\update_metadata.yml");
+        return getApiProviderObjects(getApiDefineYmlPath("update_metadata.yml"));
     }
 
     @DataProvider(name = "allStrategyRows")
     public Object[][] getAllStrategyRows() throws Exception {
-        return getMetadataProviderObjects("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\add_strategy.yml");
+        return getApiProviderObjects(getApiDefineYmlPath("add_strategy.yml"));
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, TimeoutException {
-        generateTestGroups("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\update_metadata.yml");
-        //generateTestGroups("C:\\Users\\zengb\\Documents\\java-workspace\\tm-dev-3.0.0\\autotest-framework\\src\\test\\java\\test\\add_strategy.yml");
-        //generateTestGroups("E:\\java\\workspace\\olymatp\\olymatp-dbencplt\\src\\test\\java\\test\\add_metadata.yml");
+        generateTestGroups("update_metadata.yml");
+        //generateTestGroups("add_strategy.yml");
+        //generateTestGroups("add_metadata.yml");
     }
 }
