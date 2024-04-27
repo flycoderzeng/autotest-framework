@@ -278,14 +278,14 @@ public class PairwiseTestUtils {
             ((LinkedHashMap) dict.getByPath(getDictPath(dictPrefixPath, "properties"))).forEach((fieldName, fieldProperties) -> {
                 LinkedHashMap properties = (LinkedHashMap) fieldProperties;
                 if(StringUtils.equals(properties.get("type").toString(), "array")) {
-                    String itemType = getDictPath(dictPrefixPath, fieldName.toString()) + ".items.type";
+                    String itemType = dict.getByPath(getDictPath(dictPrefixPath, "properties." + fieldName.toString()) + ".items.type");
                     if(!StringUtils.equals(itemType, "object") && !StringUtils.equals(itemType, "array")) {
-                        generateFieldValues(dict, fieldValuesMap, getDictPath(dictPrefixPath, "properties." + fieldName + ".items"),fieldName + "[0]");
+                        generateFieldValues(dict, fieldValuesMap, getDictPath(dictPrefixPath, "properties." + fieldName + ".items"),fieldPrefixPath + fieldName + "[0]");
                     }else{
-                        generateFieldValues(dict, fieldValuesMap, getDictPath(dictPrefixPath, "properties." + fieldName + ".items"), fieldName + "[0].");
+                        generateFieldValues(dict, fieldValuesMap, getDictPath(dictPrefixPath, "properties." + fieldName + ".items"), fieldPrefixPath + fieldName + "[0].");
                     }
                 }else if(StringUtils.equals(properties.get("type").toString(), "object")) {
-                    generateFieldValues(dict, fieldValuesMap, getDictPath(dictPrefixPath, "properties." + fieldName), fieldName + ".");
+                    generateFieldValues(dict, fieldValuesMap, getDictPath(dictPrefixPath, "properties." + fieldName), fieldPrefixPath + fieldName + ".");
                 }else{
                     generateField(fieldValuesMap, fieldPrefixPath, requiredFields, fieldName, properties);
                 }
@@ -301,6 +301,8 @@ public class PairwiseTestUtils {
             Boolean must = dict.getByPath(getDictPath(dictPrefixPath, "must"));
             if(must != null && must) {
                 generateField(fieldValuesMap, "", Collections.singletonList(fieldPrefixPath), fieldPrefixPath, dict.getByPath(dictPrefixPath));
+            }else{
+                generateField(fieldValuesMap, "", Collections.emptyList(), fieldPrefixPath, dict.getByPath(dictPrefixPath));
             }
         }
     }
@@ -346,7 +348,7 @@ public class PairwiseTestUtils {
                     values.add("~MIN_SUB");
                 }
                 Integer max = (Integer) properties.get("max");
-                if(max != null && max > 1 && min != max) {
+                if(max != null && min != max) {
                     values.add("~MAX_PLUS");
                 }
             } else {
@@ -404,6 +406,20 @@ public class PairwiseTestUtils {
                     }else if(fieldDefine.getMaxLength() != null) {
                         fieldTrueValue = RandomStringUtils.random(fieldDefine.getMaxLength(), SEEDS);
                     }
+                }
+                if(StringUtils.equals(fieldDefine.getType(), "integer")) {
+                    Integer min = fieldDefine.getMin();
+                    if(min == null) {
+                        min = 0;
+                    }
+                    Integer max = fieldDefine.getMax();
+                    if(max == null) {
+                        max = 100;
+                    }
+                    if(min > max) {
+                        max = min+1;
+                    }
+                    fieldTrueValue = RandomUtil.randomInt(min, max);
                 }
             }
             if(StringUtils.equals(fieldAbstractValue, "~INVALID")) {

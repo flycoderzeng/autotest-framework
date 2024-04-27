@@ -140,8 +140,8 @@ public class PairwiseTest {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, TimeoutException {
-        generateTestGroups("update_metadata.yml");
-        //generateTestGroups("add_strategy.yml");
+        //generateTestGroups("update_metadata.yml");
+        generateTestGroups("add_strategy2.yml");
         //generateTestGroups("add_metadata.yml");
     }
 }
