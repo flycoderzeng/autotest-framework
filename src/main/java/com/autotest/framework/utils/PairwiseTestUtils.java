@@ -5,7 +5,6 @@ import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.setting.yaml.YamlUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson2.JSON;
 import com.autotest.framework.antlr.constraint.core.ConstraintsLexer;
 import com.autotest.framework.antlr.constraint.core.ConstraintsParser;
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PairwiseTestUtils {
     public static final String SEEDS = "QWERTYUIOPASDFGHJKLZXCVBNM_qwertyuiopasdfghjklzxcvbnm_1234567890_中文哈哈哈";
-    public static final String PICT_FOLDER_DIR = "C:\\Users\\zengb\\Documents\\pict\\";
+    public static final String PICT_FOLDER_DIR = System.getProperty("user.home") + "/.pict/";
     public static final Map<String, FieldDefine> FIELD_DEFINE_MAP = new HashMap<>();
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
     public static final String CASE_DESCRIPTION = "__CASE_DESCRIPTION";
@@ -53,7 +52,7 @@ public class PairwiseTestUtils {
     public static final String PARAMETER_VALUE_NON_ENUM_INVALID = "~ENUM_INVALID";
 
     public static List<LinkedHashMap<String, String>> generateTestGroups(String apiDefineYmlName) throws IOException, InterruptedException, TimeoutException {
-        Dict dict = YamlUtil.loadByPath(getApiDefineYmlPath(apiDefineYmlName));
+        Dict dict = YamlUtil.loadByPath(getFilePathWithName(apiDefineYmlName));
         Map<String, List<String>> fieldValuesMap = new LinkedHashMap<>();
 
         generateFieldValues(dict, fieldValuesMap, "", "");
@@ -243,7 +242,7 @@ public class PairwiseTestUtils {
 
     public static List<LinkedHashMap<String, String>> getPictGroups(String fileName, StringBuilder builder, List<String> fieldNames, String o) throws IOException, InterruptedException, TimeoutException {
         FileUtil.writeBytes(builder.toString().getBytes(StandardCharsets.UTF_8), PICT_FOLDER_DIR + fileName);
-        String output = new ProcessExecutor().command(PICT_FOLDER_DIR + "\\pict.exe", PICT_FOLDER_DIR + fileName, "-o:"+o)
+        String output = new ProcessExecutor().command(getFilePathWithName("pict.exe"), PICT_FOLDER_DIR + fileName, "-o:"+o)
                 .readOutput(true).execute()
                 .outputUTF8();
         String[] lines = StringUtils.split(output, "\r\n");
@@ -518,7 +517,7 @@ public class PairwiseTestUtils {
         return fieldValues;
     }
 
-    public static String getApiDefineYmlPath(String fileName) {
+    public static String getFilePathWithName(String fileName) {
         List<File> files = FileUtil.loopFiles(System.getProperty("user.dir"), pathname -> pathname.getName().equals(fileName));
         if(files != null && !files.isEmpty()) {
             return files.get(0).getAbsolutePath();

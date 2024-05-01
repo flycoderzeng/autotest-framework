@@ -25,9 +25,9 @@ public class PairwiseTest {
 
     @BeforeClass
     public void before() {
-        dictAddMetadata = YamlUtil.loadByPath(getApiDefineYmlPath("add_metadata.yml"));
-        dictUpdateMetadata = YamlUtil.loadByPath(getApiDefineYmlPath("update_metadata.yml"));
-        dictAddStrategy = YamlUtil.loadByPath(getApiDefineYmlPath("add_strategy.yml"));
+        dictAddMetadata = YamlUtil.loadByPath(getFilePathWithName("add_metadata.yml"));
+        dictUpdateMetadata = YamlUtil.loadByPath(getFilePathWithName("update_metadata.yml"));
+        dictAddStrategy = YamlUtil.loadByPath(getFilePathWithName("add_strategy.yml"));
     }
 
     @Test(testName = "测试添加元数据", dataProvider = "allMetadataRows")
@@ -126,17 +126,17 @@ public class PairwiseTest {
 
     @DataProvider(name = "allMetadataRows")
     public Object[][] getAllMetadataRows() throws Exception {
-        return getApiProviderObjects(getApiDefineYmlPath("add_metadata.yml"));
+        return getApiProviderObjects(getFilePathWithName("add_metadata.yml"));
     }
 
     @DataProvider(name = "allUpdateMetadataRows")
     public Object[][] getAllUpdateMetadataRows() throws Exception {
-        return getApiProviderObjects(getApiDefineYmlPath("update_metadata.yml"));
+        return getApiProviderObjects(getFilePathWithName("update_metadata.yml"));
     }
 
     @DataProvider(name = "allStrategyRows")
     public Object[][] getAllStrategyRows() throws Exception {
-        return getApiProviderObjects(getApiDefineYmlPath("add_strategy.yml"));
+        return getApiProviderObjects(getFilePathWithName("add_strategy.yml"));
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, TimeoutException {
