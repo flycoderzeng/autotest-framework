@@ -336,7 +336,12 @@ public class PairwiseTestUtils {
         if (properties.get("enums") != null) {
             List enums = (List) properties.get("enums");
             for (int i = 0; i < enums.size(); i++) {
-                values.add(enums.get(i).toString());
+                String value = enums.get(i).toString();
+                if(ReUtil.isMatch("([0-9][0-9]*)+(.[0-9]+)?", value)) {
+                    values.add("\"" + value + "\"");
+                }else {
+                    values.add(value);
+                }
             }
             values.add(PARAMETER_VALUE_NON_ENUM_INVALID);
         } else {
@@ -492,7 +497,16 @@ public class PairwiseTestUtils {
                     }
                 }
             }
-            fieldValues.put("$." + fieldName, fieldTrueValue);
+            if(fieldTrueValue instanceof String) {
+                String value = (String) fieldTrueValue;
+                if(value.startsWith("\"") && value.endsWith("\"")) {
+                    fieldValues.put("$." + fieldName, value.substring(1, value.length() - 1));
+                } else {
+                    fieldValues.put("$." + fieldName, fieldTrueValue);
+                }
+            } else {
+                fieldValues.put("$." + fieldName, fieldTrueValue);
+            }
         });
         fieldValues.put(EXPECTED_RESULT, group.get(EXPECTED_RESULT));
         if(group.get(CASE_DESCRIPTION) != null) {
