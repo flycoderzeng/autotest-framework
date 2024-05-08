@@ -1,6 +1,5 @@
 package com.autotest.framework.antlr.constraint.visitor;
 
-import cn.hutool.core.lang.Dict;
 import com.autotest.framework.antlr.constraint.core.ConstraintsBaseVisitor;
 import com.autotest.framework.antlr.constraint.core.ConstraintsLexer;
 import com.autotest.framework.antlr.constraint.core.ConstraintsParser;
@@ -8,26 +7,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
-    // 接口定义
-    private final Dict apiDict;
-    // 接口参数取值
-    private final Map<String, List<String>> fieldValuesMap;
-    // 约束
-    private final String constraint;
     // 用例组合
-    private final LinkedHashMap<String, String> group;
+    private final Map<String, String> group;
     private String stage = "begin";
 
-    public ConstraintsVisitor(Dict apiDict, Map<String, List<String>> fieldValuesMap, String constraint, LinkedHashMap<String, String> group) {
-        this.apiDict = apiDict;
-        this.fieldValuesMap = fieldValuesMap;
-        this.constraint = constraint;
+    public ConstraintsVisitor(Map<String, String> group) {
         this.group = group;
     }
 
@@ -88,10 +76,7 @@ public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
                 values[i] = values[i].substring(0, values[i].length()-1);
             }
         }
-        if(Arrays.stream(values).anyMatch(v -> StringUtils.equals(v, fieldValue))) {
-            return true;
-        }
-        return false;
+        return Arrays.stream(values).anyMatch(v -> StringUtils.equals(v, fieldValue));
     }
 
     @Override
@@ -114,7 +99,7 @@ public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
     public Object visitIfThenStatement(ConstraintsParser.IfThenStatementContext ctx) {
         stage = "if";
         final Boolean visit = (Boolean) visit(ctx.getChild(1));
-        if(!visit) {
+        if(Boolean.FALSE.equals(visit)) {
             throw new RuntimeException("IF 条件不成立");
         }
         stage = "then";
@@ -126,8 +111,8 @@ public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
         Object left = visit(ctx.getChild(0));
         Object right = visit(ctx.getChild(2));
         log.trace("{} {} {}", left, ctx.AND().getText(), right);
-        if (left instanceof Boolean && right instanceof Boolean) {
-            return (Boolean) left && (Boolean) right;
+        if (left instanceof Boolean leftBoolean && right instanceof Boolean rightBoolean) {
+            return leftBoolean && rightBoolean;
         }
         return false;
     }
@@ -137,8 +122,8 @@ public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
         Object left = visit(ctx.getChild(0));
         Object right = visit(ctx.getChild(2));
         log.trace("{} {} {}", left, ctx.OR().getText(), right);
-        if (left instanceof Boolean && right instanceof Boolean) {
-            return (Boolean) left || (Boolean) right;
+        if (left instanceof Boolean leftBoolean && right instanceof Boolean rightBoolean) {
+            return leftBoolean || rightBoolean;
         }
         return false;
     }

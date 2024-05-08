@@ -137,7 +137,7 @@ public class PairwiseTestUtils {
                     CommonTokenStream tokens = new CommonTokenStream(lexer);
                     ConstraintsParser parser = new ConstraintsParser(tokens);
                     ConstraintsParser.ExpressionContext context = parser.expression();
-                    ConstraintsVisitor visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraint, group);
+                    ConstraintsVisitor visitor = new ConstraintsVisitor(group);
                     try {
                         final Boolean visitResult = (Boolean) visitor.visit(context);
                         if(Boolean.TRUE.equals(visitResult)) {
@@ -161,7 +161,7 @@ public class PairwiseTestUtils {
                                 tokens = new CommonTokenStream(lexer);
                                 parser = new ConstraintsParser(tokens);
                                 context = parser.expression();
-                                visitor = new ConstraintsVisitor(dict, fieldValuesMap, constraints.get(j), group);
+                                visitor = new ConstraintsVisitor(group);
                                 final Boolean visitResult = (Boolean) visitor.visit(context);
                                 if(Boolean.TRUE.equals(visitResult)) {
                                     trueCount++;
