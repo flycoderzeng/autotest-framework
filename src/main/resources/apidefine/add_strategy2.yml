@@ -133,8 +133,8 @@ properties:
         enums:
           - 1
 constraints:
-  - IF [encryptPolicy.encryptAlgorithm] = "FPE" THEN [encryptPolicy.typeCode] IN {"120"}
-  - IF [encryptPolicy.encryptAlgorithm] = "FPE-HEAD" THEN [encryptPolicy.typeCode] IN {"120"}
+  - IF [encryptPolicy.encryptAlgorithm] = "FPE" THEN [encryptPolicy.typeCode] IN {"NUMBER_120"}
+  - IF [encryptPolicy.encryptAlgorithm] = "FPE-HEAD" THEN [encryptPolicy.typeCode] IN {"NUMBER_120"}
   - IF [encryptPolicy.encryptAlgorithm] = "AES" THEN [encryptPolicy.secretKeyCode] IN {"${modelData.secretKeyAes}"}
   - IF [encryptPolicy.encryptAlgorithm] <> "AES" THEN [encryptPolicy.secretKeyCode] <> "${modelData.secretKeyAes}"
   - IF [hashPolicy.hashAlgorithm] = "HMAC-SM3" THEN [hashPolicy.hashSecretKeyCode] IN {"${modelData.secretKeyHmacSm3}"}

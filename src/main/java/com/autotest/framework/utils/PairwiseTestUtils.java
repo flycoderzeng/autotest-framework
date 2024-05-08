@@ -181,13 +181,13 @@ public class PairwiseTestUtils {
                 }
             }
         }
-        log.info("约束反例大小: {}", constraintCounterexampleList.size());
+        log.info("约束反例大小1: {}", constraintCounterexampleList.size());
         constraintCounterexampleList = constraintCounterexampleList.stream()
                 .collect(Collectors.collectingAndThen(
                         Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Map::hashCode))),
                         ArrayList::new
                 ));
-        log.info("约束反例大小: {}", constraintCounterexampleList.size());
+        log.info("约束反例大小2: {}", constraintCounterexampleList.size());
         constraintCounterexampleList = constraintCounterexampleList.stream()
                 .collect(Collectors.collectingAndThen(
                         Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(m -> {
@@ -201,7 +201,7 @@ public class PairwiseTestUtils {
                         }))),
                         ArrayList::new
                 ));
-        log.info("约束反例大小: {}", constraintCounterexampleList.size());
+        log.info("约束反例大小3: {}", constraintCounterexampleList.size());
         log.info("约束反例详情: {}", JSON.toJSONString(constraintCounterexampleList));
 
         for (final String key : fieldNames) {
@@ -337,7 +337,7 @@ public class PairwiseTestUtils {
             for (int i = 0; i < enums.size(); i++) {
                 String value = enums.get(i).toString();
                 if(ReUtil.isMatch("([0-9][0-9]*)+(.[0-9]+)?", value)) {
-                    values.add("\"" + value + "\"");
+                    values.add("NUMBER_" + value);
                 }else {
                     values.add(value);
                 }
@@ -498,8 +498,8 @@ public class PairwiseTestUtils {
             }
             if(fieldTrueValue instanceof String) {
                 String value = (String) fieldTrueValue;
-                if(value.startsWith("\"") && value.endsWith("\"")) {
-                    fieldValues.put("$." + fieldName, value.substring(1, value.length() - 1));
+                if(value.startsWith("NUMBER_")) {
+                    fieldValues.put("$." + fieldName, value.substring(7));
                 } else {
                     fieldValues.put("$." + fieldName, fieldTrueValue);
                 }

@@ -74,7 +74,7 @@ public class ConstraintsVisitor extends ConstraintsBaseVisitor<Object> {
         String right = ctx.getChild(2).getText();
         log.trace("原式: {} IN {}", left, right);
         left = left.substring(1, left.length() - 1);
-        final String fieldValue = (String) group.get(left);
+        final String fieldValue = group.get(left);
         right = right.substring(1, right.length() - 1);
         final String[] values = right.split(",");
         for (int i = 0; i < values.length; i++) {
