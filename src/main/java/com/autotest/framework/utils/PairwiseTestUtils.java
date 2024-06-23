@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class PairwiseTestUtils {
     public static final String SEEDS = "QWERTYUIOPASDFGHJKLZXCVBNM_qwertyuiopasdfghjklzxcvbnm_1234567890_中文哈哈哈";
     public static final String PICT_FOLDER_DIR = System.getProperty("user.home") + "/.pict/";
-    public static final Map<String, FieldDefine> FIELD_DEFINE_MAP = new HashMap<>();
+    protected static final Map<String, FieldDefine> FIELD_DEFINE_MAP = new HashMap<>();
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
     public static final String CASE_DESCRIPTION = "__CASE_DESCRIPTION";
     public static final String PARAMETER_TYPE_ARRAY = "array";
@@ -50,6 +50,10 @@ public class PairwiseTestUtils {
     public static final String PARAMETER_VALUE_NON_MAX_PLUS = "~MAX_PLUS";
     public static final String PARAMETER_VALUE_NON_MIN_SUB = "~MIN_SUB";
     public static final String PARAMETER_VALUE_NON_ENUM_INVALID = "~ENUM_INVALID";
+
+    private PairwiseTestUtils() {
+
+    }
 
     public static List<LinkedHashMap<String, String>> generateTestGroups(String apiDefineYmlName) throws IOException, InterruptedException, TimeoutException {
         Dict dict = YamlUtil.loadByPath(getFilePathWithName(apiDefineYmlName));
@@ -105,8 +109,7 @@ public class PairwiseTestUtils {
         }
 
         fileName = apiDefineYmlName.replaceAll(".yml", ".txt");
-        final List<LinkedHashMap<String, String>> groups = getPictGroups(fileName, builder2, fieldNames, "1");
-        List<LinkedHashMap<String, String>> distinctList = groups;
+        List<LinkedHashMap<String, String>> distinctList = getPictGroups(fileName, builder2, fieldNames, "1");
 
         for (final String key : fieldNames) {
             distinctList = distinctList.stream()
@@ -221,8 +224,8 @@ public class PairwiseTestUtils {
         log.info("组合数: {}", distinctList.size());
         for (LinkedHashMap<String, String> group : distinctList) {
             String expectedResult = "success";
-            for (Object value : group.values()) {
-                if(((String)value).startsWith("~")) {
+            for (String value : group.values()) {
+                if(value.startsWith("~")) {
                     expectedResult = "fail";
                     break;
                 }
@@ -319,7 +322,7 @@ public class PairwiseTestUtils {
             requiredFields = new ArrayList<>();
         }
         String fieldType = properties.get("type").toString();
-        if (requiredFields.contains(fieldName)) {
+        if (requiredFields.contains(fieldName.toString())) {
             values.add(PARAMETER_VALUE_NON_NULL);
             if (StringUtils.equals(fieldType, PARAMETER_TYPE_STRING)) {
                 values.add(PARAMETER_VALUE_NON_EMPTY);
@@ -334,11 +337,11 @@ public class PairwiseTestUtils {
         }
         if (properties.get("enums") != null) {
             List enums = (List) properties.get("enums");
-            for (int i = 0; i < enums.size(); i++) {
-                String value = enums.get(i).toString();
-                if(ReUtil.isMatch("([0-9][0-9]*)+(.[0-9]+)?", value)) {
+            for (Object anEnum : enums) {
+                String value = anEnum.toString();
+                if (ReUtil.isMatch("([0-9][0-9]*)+(.[0-9]+)?", value)) {
                     values.add("NUMBER_" + value);
-                }else {
+                } else {
                     values.add(value);
                 }
             }
@@ -433,8 +436,7 @@ public class PairwiseTestUtils {
                     fieldTrueValue = RandomUtil.randomInt(min, max);
                 }
             }
-            if(StringUtils.equals(fieldAbstractValue, "~INVALID")) {
-                if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
+            if(StringUtils.equals(fieldAbstractValue, "~INVALID") && StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
                     if(StringUtils.isNoneBlank(fieldDefine.getRegex())) {
                         Generex generex = new Generex(fieldDefine.getRegex());
                         fieldTrueValue = StringUtils.reverse(generex.random());
@@ -444,31 +446,27 @@ public class PairwiseTestUtils {
                         fieldValues.put(CASE_DESCRIPTION, fieldName + " string长度向上越界");
                     }
                 }
-            }
-            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MAXLENGTH_PLUS)) {
-                if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
+
+            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MAXLENGTH_PLUS) && StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
                     fieldTrueValue = RandomStringUtils.random(fieldDefine.getMaxLength() + 1, SEEDS);
                     fieldValues.put(CASE_DESCRIPTION, fieldName + " string长度向上越界");
                 }
-            }
-            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MINLENGTH_SUB)) {
-                if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
+
+            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MINLENGTH_SUB) && StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
                     fieldTrueValue = RandomStringUtils.random(fieldDefine.getMinLength() - 1, SEEDS);
                     fieldValues.put(CASE_DESCRIPTION, fieldName + " string长度向下越界");
                 }
-            }
-            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MAX_PLUS)) {
-                if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_INTEGER)) {
+
+            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MAX_PLUS) && StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_INTEGER)) {
                     fieldTrueValue = fieldDefine.getMax() + 1;
                     fieldValues.put(CASE_DESCRIPTION, fieldName + " integer值向上越界");
                 }
-            }
-            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MIN_SUB)) {
-                if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_INTEGER)) {
+
+            if(StringUtils.equals(fieldAbstractValue, PARAMETER_VALUE_NON_MIN_SUB) && StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_INTEGER)) {
                     fieldTrueValue = fieldDefine.getMin() - 1;
                     fieldValues.put(CASE_DESCRIPTION, fieldName + " integer值向下越界");
                 }
-            }
+
             if(ReUtil.isMatch(StepNode.TEMPLATE_CASE_VARIABLE_PATTERN, fieldAbstractValue)) {
                 String modelDataPath = fieldAbstractValue.substring(2, fieldAbstractValue.length() - 1);
                 log.trace("元数据路径: {}", modelDataPath);
@@ -484,7 +482,7 @@ public class PairwiseTestUtils {
                     log.info("SQL执行结果: {}", JSON.toJSONString(maps));
                     fieldTrueValue = JsonPath.read(maps, modelDataDefine.getExtractPath());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("", e);
                     throw new RuntimeException(e);
                 } finally {
                     if(connection != null) {
@@ -496,8 +494,7 @@ public class PairwiseTestUtils {
                     }
                 }
             }
-            if(fieldTrueValue instanceof String) {
-                String value = (String) fieldTrueValue;
+            if(fieldTrueValue instanceof String value) {
                 if(value.startsWith("NUMBER_")) {
                     fieldValues.put("$." + fieldName, value.substring(7));
                 } else {
