@@ -13,5 +13,28 @@ public class ReplaceTest {
             i++;
         }
         System.out.println(res);
+        String s="{\n" +
+                "    \"applicationId\": \"${$.applicationId}\",\n" +
+                "    \"metadataStructureIds\": [\n" +
+                "        \"${$.metadataStructureIds[0]}\"\n" +
+                "    ],\n" +
+                "    \"encryptPolicy\": {\n" +
+                "        \"secretKeyCode\": \"${$.encryptPolicy.secretKeyCode}\",\n" +
+                "        \"encryptAlgorithm\": \"${$.encryptPolicy.encryptAlgorithm}\",\n" +
+                "        \"typeCode\": \"${$.encryptPolicy.typeCode}\",\n" +
+                "        \"encryptMode\": \"${$.encryptPolicy.encryptMode}\",\n" +
+                "        \"columnFormat\": \"${$.encryptPolicy.columnFormat}\",\n" +
+                "        \"stage\": \"${$.encryptPolicy.stage}\",\n" +
+                "        \"hasEncryptField\": \"${$.encryptPolicy.hasEncryptField}\"\n" +
+                "    },\n" +
+                "    \"hashPolicy\": {\n" +
+                "        \"hashAlgorithm\": \"${$.hashPolicy.hashAlgorithm}\",\n" +
+                "        \"hashSecretKeyCode\": \"${$.hashPolicy.hashSecretKeyCode}\",\n" +
+                "        \"hashLen\": \"${$.hashPolicy.hashLen}\",\n" +
+                "        \"hashVerify\": \"${$.hashPolicy.hashVerify}\",\n" +
+                "        \"hasHashField\": \"${$.hashPolicy.hasHashField}\"\n" +
+                "    }\n" +
+                "}";
+        System.out.println(s);
     }
 }

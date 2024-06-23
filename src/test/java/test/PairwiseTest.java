@@ -40,14 +40,16 @@ public class PairwiseTest {
         new BaseAutoCaseBuilder(UserTestContext.getInstance())
                 .updateVariable(fieldValues)
                 .updateVariable("expectedResult", expectedResult)
-                .postWithCompanySuperAdmin("添加元数据", "/database_meta/metadata/v2/add", "{\n" +
-                        "                         \"databaseName\": \"${$.databaseName}\",\n" +
-                        "                         \"schemaName\": \"${$.schemaName}\",\n" +
-                        "                         \"databaseType\": \"${$.databaseType}\",\n" +
-                        "                         \"tableName\": \"${$.tableName}\",\n" +
-                        "                         \"columnName\": \"${$.columnName}\",\n" +
-                        "                         \"columnType\": \"${$.columnType}\"\n" +
-                        "                     }")
+                .post("添加元数据", "/database_meta/metadata/v2/add", """
+                        {
+                            "databaseName": "${$.databaseName}",
+                            "schemaName": "${$.schemaName}",
+                            "databaseType": "${$.databaseType}",
+                            "tableName": "${$.tableName}",
+                            "columnName": "${$.columnName}",
+                            "columnType": "${$.columnType}"
+                        }
+                        """)
                 .beginIf("如果预期成功", "${expectedResult} == 'success'")
                 .assertSuccess()
                 .endIf("预期成功结束")
@@ -67,15 +69,17 @@ public class PairwiseTest {
         new BaseAutoCaseBuilder(UserTestContext.getInstance())
                 .updateVariable(fieldValues)
                 .updateVariable("expectedResult", expectedResult)
-                .postWithCompanySuperAdmin("修改元数据", "/database_meta/metadata/v2/update", "{\n" +
-                        "                         \"metadataStructureId\": \"${$.metadataStructureId}\",\n" +
-                        "                         \"databaseName\": \"${$.databaseName}\",\n" +
-                        "                         \"schemaName\": \"${$.schemaName}\",\n" +
-                        "                         \"databaseType\": \"${$.databaseType}\",\n" +
-                        "                         \"tableName\": \"${$.tableName}\",\n" +
-                        "                         \"columnName\": \"${$.columnName}\",\n" +
-                        "                         \"columnType\": \"${$.columnType}\"\n" +
-                        "                     }")
+                .post("修改元数据", "/database_meta/metadata/v2/update", """
+                        {
+                          "metadataStructureId": "${$.metadataStructureId}",
+                          "databaseName": "${$.databaseName}",
+                          "schemaName": "${$.schemaName}",
+                          "databaseType": "${$.databaseType}",
+                          "tableName": "${$.tableName}",
+                          "columnName": "${$.columnName}",
+                          "columnType": "${$.columnType}"
+                        }
+                        """)
                 .beginIf("如果预期成功", "${expectedResult} == 'success'")
                 .assertSuccess()
                 .endIf("预期成功结束")
@@ -93,28 +97,29 @@ public class PairwiseTest {
         new BaseAutoCaseBuilder(UserTestContext.getInstance())
                 .updateVariable(fieldValues)
                 .updateVariable("expectedResult", expectedResult)
-                .postWithCompanySuperAdmin("添加元数据", "/database_meta/policy/v2/add", "{\n" +
-                        "    \"applicationId\": \"${$.applicationId}\",\n" +
-                        "    \"metadataStructureIds\": [\n" +
-                        "        \"${$.metadataStructureIds[0]}\"\n" +
-                        "    ],\n" +
-                        "    \"encryptPolicy\": {\n" +
-                        "        \"secretKeyCode\": \"${$.encryptPolicy.secretKeyCode}\",\n" +
-                        "        \"encryptAlgorithm\": \"${$.encryptPolicy.encryptAlgorithm}\",\n" +
-                        "        \"typeCode\": \"${$.encryptPolicy.typeCode}\",\n" +
-                        "        \"encryptMode\": \"${$.encryptPolicy.encryptMode}\",\n" +
-                        "        \"columnFormat\": \"${$.encryptPolicy.columnFormat}\",\n" +
-                        "        \"stage\": \"${$.encryptPolicy.stage}\",\n" +
-                        "        \"hasEncryptField\": \"${$.encryptPolicy.hasEncryptField}\"\n" +
-                        "    },\n" +
-                        "    \"hashPolicy\": {\n" +
-                        "        \"hashAlgorithm\": \"${$.hashPolicy.hashAlgorithm}\",\n" +
-                        "        \"hashSecretKeyCode\": \"${$.hashPolicy.hashSecretKeyCode}\",\n" +
-                        "        \"hashLen\": \"${$.hashPolicy.hashLen}\",\n" +
-                        "        \"hashVerify\": \"${$.hashPolicy.hashVerify}\",\n" +
-                        "        \"hasHashField\": \"${$.hashPolicy.hasHashField}\"\n" +
-                        "    }\n" +
-                        "}")
+                .post("添加元数据", "/database_meta/policy/v2/add", """
+                        {
+                            "applicationId": "${$.applicationId}",
+                            "metadataStructureIds": [
+                                "${$.metadataStructureIds[0]}"
+                            ],
+                            "encryptPolicy": {
+                                "secretKeyCode": "${$.encryptPolicy.secretKeyCode}",
+                                "encryptAlgorithm": "${$.encryptPolicy.encryptAlgorithm}",
+                                "typeCode": "${$.encryptPolicy.typeCode}",
+                                "encryptMode": "${$.encryptPolicy.encryptMode}",
+                                "columnFormat": "${$.encryptPolicy.columnFormat}",
+                                "stage": "${$.encryptPolicy.stage}",
+                                "hasEncryptField": "${$.encryptPolicy.hasEncryptField}"
+                            },
+                            "hashPolicy": {
+                                "hashAlgorithm": "${$.hashPolicy.hashAlgorithm}",
+                                "hashSecretKeyCode": "${$.hashPolicy.hashSecretKeyCode}",
+                                "hashLen": "${$.hashPolicy.hashLen}",
+                                "hashVerify": "${$.hashPolicy.hashVerify}",
+                                "hasHashField": "${$.hashPolicy.hasHashField}"
+                            }
+                        }""")
                 .beginIf("如果预期成功", "${expectedResult} == 'success'")
                 .assertSuccess()
                 .endIf("预期成功结束")
@@ -126,17 +131,17 @@ public class PairwiseTest {
 
     @DataProvider(name = "allMetadataRows")
     public Object[][] getAllMetadataRows() throws Exception {
-        return getApiProviderObjects(getFilePathWithName("add_metadata.yml"));
+        return getApiProviderObjects("add_metadata.yml");
     }
 
     @DataProvider(name = "allUpdateMetadataRows")
     public Object[][] getAllUpdateMetadataRows() throws Exception {
-        return getApiProviderObjects(getFilePathWithName("update_metadata.yml"));
+        return getApiProviderObjects("update_metadata.yml");
     }
 
     @DataProvider(name = "allStrategyRows")
     public Object[][] getAllStrategyRows() throws Exception {
-        return getApiProviderObjects(getFilePathWithName("add_strategy.yml"));
+        return getApiProviderObjects("add_strategy.yml");
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, TimeoutException {

@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.Assert;
-import org.testng.Reporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -79,7 +78,6 @@ public class HttpStepNode extends StepNode {
     @Override
     public void run() throws Exception {
         log.info("===========>执行步骤: {}", stepName);
-        Reporter.log("执行步骤: " + stepName);
         if (skip()) {
             return;
         }
@@ -90,14 +88,13 @@ public class HttpStepNode extends StepNode {
         if(StringUtils.equals("application_token", httpTokenType)) {
             url = url.replace(":8443", "");
         }
-        if(url.indexOf("/openApis/") > -1) {
+        if(url.contains("/openApis/")) {
             url = url.replace(":8443", ":9443");
         }
 
         HttpRequest httpRequest = HttpUtil.createGet(url);
         if (StringUtils.equals("POST", requestType)) {
             log.info("发送 POST 请求");
-            Reporter.log("发送 POST 请求");
             httpRequest = HttpUtil.createPost(url);
         }
 
@@ -109,7 +106,6 @@ public class HttpStepNode extends StepNode {
         }
 
         log.info("请求地址: {}", url);
-        Reporter.log("请求地址: " + url);
 
         if (headers != null && !headers.isEmpty()) {
             httpRequest.addHeaders(headers);
@@ -118,19 +114,16 @@ public class HttpStepNode extends StepNode {
             httpRequest.cookie(cookies);
         }
 
-        HttpResponse response = httpRequest.execute();
-
         final StringBuilder logHeaders = new StringBuilder("Request Headers: \r\n");
         httpRequest.headers().forEach((k, v) -> logHeaders.append(String.format("%s: %s%n", k, v)));
         log.info(logHeaders.toString());
-        Reporter.log(logHeaders.toString());
         if (StringUtils.equals("POST", requestType)) {
-            log.info("请求内容:\r\n" + actualBody);
-            Reporter.log("请求内容:\r\n" + actualBody);
+            log.info("请求内容:\r\n{}", actualBody);
         }
 
+        HttpResponse response = httpRequest.execute();
+
         log.info(response.toString());
-        Reporter.log(response.toString());
         Assert.assertEquals(response.getStatus(), 200);
 
         if(StringUtils.isNoneBlank(saveFileName)) {
