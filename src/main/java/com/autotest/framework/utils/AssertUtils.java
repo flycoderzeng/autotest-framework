@@ -4,13 +4,13 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.autotest.framework.adapter.DataTypeAdapter;
 import com.autotest.framework.adapter.TimeTypeAdapter;
 import com.autotest.framework.adapter.TimestampTypeAdapter;
 import com.autotest.framework.common.enums.RelationOperatorEnum;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;

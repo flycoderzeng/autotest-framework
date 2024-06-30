@@ -1,9 +1,9 @@
 package com.autotest.framework.nodes.core;
 
-import com.googlecode.aviator.AviatorEvaluator;
-import com.googlecode.aviator.Expression;
 import com.autotest.framework.AutoTestContext;
 import com.autotest.framework.nodes.StepNode;
+import com.googlecode.aviator.AviatorEvaluator;
+import com.googlecode.aviator.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;

@@ -1,16 +1,16 @@
 package com.autotest.framework.nodes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.autotest.framework.AutoTestContext;
 import com.autotest.framework.adapter.DataTypeAdapter;
 import com.autotest.framework.adapter.LocalDateTimeAdapter;
 import com.autotest.framework.adapter.TimeTypeAdapter;
 import com.autotest.framework.adapter.TimestampTypeAdapter;
-import com.autotest.framework.antlr.expression.visitor.AssertExpressionVisitor;
 import com.autotest.framework.antlr.expression.core.ExpressionLexer;
 import com.autotest.framework.antlr.expression.core.ExpressionParser;
+import com.autotest.framework.antlr.expression.visitor.AssertExpressionVisitor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import nl.flotsam.xeger.Xeger;

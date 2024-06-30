@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.autotest.framework.utils.SqlUtils.translateMysqlToOracle;
-
 @Slf4j
 @Data
 public class JdbcStepNode extends StepNode {

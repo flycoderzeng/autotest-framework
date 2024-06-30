@@ -1,8 +1,8 @@
 package com.autotest.framework.nodes.core;
 
-import com.jayway.jsonpath.JsonPath;
 import com.autotest.framework.AutoTestContext;
 import com.autotest.framework.nodes.StepNode;
+import com.jayway.jsonpath.JsonPath;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

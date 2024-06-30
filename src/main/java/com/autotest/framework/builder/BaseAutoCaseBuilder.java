@@ -1,6 +1,5 @@
 package com.autotest.framework.builder;
 
-import com.alibaba.fastjson.JSON;
 import com.autotest.framework.AutoTestContext;
 import com.autotest.framework.common.enums.RelationOperatorEnum;
 import com.autotest.framework.context.UserTestContext;
@@ -8,8 +7,6 @@ import com.autotest.framework.nodes.StepNode;
 import com.autotest.framework.nodes.core.*;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.net.HttpCookie;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

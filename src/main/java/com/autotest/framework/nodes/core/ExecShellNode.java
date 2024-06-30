@@ -1,10 +1,10 @@
 package com.autotest.framework.nodes.core;
 
+import com.autotest.framework.AutoTestContext;
+import com.autotest.framework.nodes.StepNode;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.autotest.framework.AutoTestContext;
-import com.autotest.framework.nodes.StepNode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;

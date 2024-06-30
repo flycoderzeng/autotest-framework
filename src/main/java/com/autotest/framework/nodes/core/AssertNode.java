@@ -1,11 +1,10 @@
 package com.autotest.framework.nodes.core;
 
-import com.jayway.jsonpath.JsonPath;
 import com.autotest.framework.AutoTestContext;
-import com.autotest.framework.common.enums.DbTypeEnum;
 import com.autotest.framework.common.enums.RelationOperatorEnum;
 import com.autotest.framework.nodes.StepNode;
 import com.autotest.framework.utils.AssertUtils;
+import com.jayway.jsonpath.JsonPath;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

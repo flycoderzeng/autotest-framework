@@ -2,9 +2,10 @@ package com.autotest.framework.context;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.setting.yaml.YamlUtil;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import com.autotest.framework.common.entities.JdbcConfig;
 import com.autotest.framework.jdbc.JdbcDataSourceFactory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,6 +21,7 @@ public class UserTestContext {
     private final JdbcDataSourceFactory jdbcDataSourceFactory = JdbcDataSourceFactory.getInstance();
     // 全局变量
     public Map<String, Object> variables = new HashMap<>();
+    @Getter
     public String testEnvName;
     // 应用配置文件application.yml
     public Dict applicationVariablesDict;
@@ -77,22 +79,18 @@ public class UserTestContext {
         String path = file.getAbsolutePath();
         log.info("环境配置文件路径: {}", path);
         testVariablesDict = YamlUtil.loadByPath(path);
-        Object objectServerIp = testVariablesDict.getByPath("cipherPlatform.master.serverIp");
+        Object objectServerIp = testVariablesDict.getByPath("platform.master.serverIp");
         if(objectServerIp != null) {
             this.platformMasterServerIp = objectServerIp.toString();
         }
-        Object objectServerAdminPort = testVariablesDict.getByPath("cipherPlatform.master.serverAdminPort");
+        Object objectServerAdminPort = testVariablesDict.getByPath("platform.master.serverPort");
         if(objectServerAdminPort != null) {
             this.platformMasterServerAdminPort = objectServerAdminPort.toString();
         }
-        Object objectRootPassword = testVariablesDict.getByPath("cipherPlatform.master.rootPassword");
+        Object objectRootPassword = testVariablesDict.getByPath("platform.master.rootPassword");
         if(objectServerAdminPort != null) {
             this.platformMasterRootPassword = objectRootPassword.toString();
         }
-    }
-
-    public String getTestEnvName() {
-        return testEnvName;
     }
 
     public Connection getConnection(String datasourceName) {
@@ -117,7 +115,7 @@ public class UserTestContext {
     }
 
     public JdbcConfig getJdbcConfig(String datasourceName) {
-        return JSONObject.parseObject(JSONObject.toJSONString(testVariablesDict.getByPath(datasourceName)), JdbcConfig.class);
+        return JSON.parseObject(JSON.toJSONString(testVariablesDict.getByPath(datasourceName)), JdbcConfig.class);
     }
 
     public Object getApplicationConfig(String path) {
