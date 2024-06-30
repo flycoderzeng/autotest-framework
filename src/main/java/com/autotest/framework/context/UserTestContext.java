@@ -21,17 +21,14 @@ public class UserTestContext {
     // 全局变量
     public Map<String, Object> variables = new HashMap<>();
     public String testEnvName;
-    public String testProjectName;
-    public String dbEncDecTestDbType = "mysql";
-    public String dbEncDecTestJdbcMode = "jdbc";
     // 应用配置文件application.yml
     public Dict applicationVariablesDict;
     // 环境配置文件 test_env_config_xxx.yml
     public Dict testVariablesDict;
 
-    public String cipherPlatformMasterServerIp;
-    public String cipherPlatformMasterServerAdminPort;
-    public String cipherPlatformMasterRootPassword;
+    public String platformMasterServerIp;
+    public String platformMasterServerAdminPort;
+    public String platformMasterRootPassword;
 
     public static UserTestContext getInstance() {
         if(userTestContext == null) {
@@ -68,18 +65,6 @@ public class UserTestContext {
         }
         testEnvName = objectEnvName.toString();
         log.info("测试环境名称: {}", testEnvName);
-        Object objectProjectName = applicationVariablesDict.getByPath("test.projectName");
-        if(objectProjectName != null) {
-            this.testProjectName = objectProjectName.toString();
-        }
-        Object objectDbEncDecTestDbType = applicationVariablesDict.getByPath("test.dbEncDecTestDbType");
-        if(objectDbEncDecTestDbType != null) {
-            this.dbEncDecTestDbType = objectDbEncDecTestDbType.toString();
-        }
-        Object objectDbEncDecTestJdbcMode = applicationVariablesDict.getByPath("test.dbEncDecTestJdbcMode");
-        if(objectDbEncDecTestJdbcMode != null) {
-            this.dbEncDecTestJdbcMode = objectDbEncDecTestJdbcMode.toString();
-        }
     }
 
     public void initTestEnvConfig() {
@@ -94,15 +79,15 @@ public class UserTestContext {
         testVariablesDict = YamlUtil.loadByPath(path);
         Object objectServerIp = testVariablesDict.getByPath("cipherPlatform.master.serverIp");
         if(objectServerIp != null) {
-            this.cipherPlatformMasterServerIp = objectServerIp.toString();
+            this.platformMasterServerIp = objectServerIp.toString();
         }
         Object objectServerAdminPort = testVariablesDict.getByPath("cipherPlatform.master.serverAdminPort");
         if(objectServerAdminPort != null) {
-            this.cipherPlatformMasterServerAdminPort = objectServerAdminPort.toString();
+            this.platformMasterServerAdminPort = objectServerAdminPort.toString();
         }
         Object objectRootPassword = testVariablesDict.getByPath("cipherPlatform.master.rootPassword");
         if(objectServerAdminPort != null) {
-            this.cipherPlatformMasterRootPassword = objectRootPassword.toString();
+            this.platformMasterRootPassword = objectRootPassword.toString();
         }
     }
 
@@ -113,15 +98,6 @@ public class UserTestContext {
     public Connection getConnection(String datasourceName) {
         log.info("datasourceName: {}", datasourceName);
         return jdbcDataSourceFactory.getConnection(getJdbcConfig(datasourceName));
-    }
-
-    public Connection getOlymConnection() {
-        return getConnection("datasource.dbEncDec." + dbEncDecTestJdbcMode +
-                "." + dbEncDecTestDbType);
-    }
-
-    public Connection getDirectConnection() {
-        return getConnection("datasource.dbEncDec.direct." + dbEncDecTestDbType);
     }
 
     public void putVariableObject(String key, Object value) {

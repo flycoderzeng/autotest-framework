@@ -78,13 +78,6 @@ public class JdbcStepNode extends StepNode {
     }
 
     public void execSql(String actualSql, Connection connection) throws Exception {
-        if("db-enc-dec".equals(autoTestContext.userTestContext.testProjectName)) {
-            if ("Oracle".equals(connection.getMetaData().getDatabaseProductName())) {
-                actualSql = translateMysqlToOracle(actualSql);
-                log.info("[{}] 转换后的ORACLE SQL: {}", autoTestContext.taskId, actualSql);
-            }
-        }
-
         if (actualSql.toLowerCase().startsWith("select")) {
             List<Map<String, Object>> maps;
             if (this.params != null && this.params.length > 0) {

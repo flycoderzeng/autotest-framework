@@ -72,10 +72,6 @@ public class AssertNode extends StepNode {
             if (rightOperandType == 3) {
                 result = autoTestContext.getVariableString(path);
             } else {
-                if (path.startsWith("$.") && "db-enc-dec".equals(autoTestContext.userTestContext.testProjectName)
-                        && DbTypeEnum.ORACLE.val().equals(autoTestContext.userTestContext.dbEncDecTestDbType)) {
-                    path = path.toUpperCase();
-                }
                 if (path.startsWith("$.") && !RelationOperatorEnum.PATH_NOT_EXISTS.equals(relationOperator)) {
                     result = JsonPath.read(autoTestContext.getVariableString(BUILTIN_VARIABLE_RESPONSE), path);
                 } else if (path.startsWith("$.") && RelationOperatorEnum.PATH_NOT_EXISTS.equals(relationOperator)) {

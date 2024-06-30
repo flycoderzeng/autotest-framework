@@ -83,7 +83,7 @@ public class HttpStepNode extends StepNode {
         }
         String url = replacePlaceholder(this.uri);
         if(!url.startsWith("http")) {
-            url = "https://" + autoTestContext.userTestContext.cipherPlatformMasterServerIp + ":8443" + url;
+            url = "https://" + autoTestContext.userTestContext.platformMasterServerIp + ":8443" + url;
         }
         if(StringUtils.equals("application_token", httpTokenType)) {
             url = url.replace(":8443", "");

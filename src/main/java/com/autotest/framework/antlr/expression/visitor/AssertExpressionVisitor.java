@@ -138,10 +138,6 @@ public class AssertExpressionVisitor extends ExpressionBaseVisitor<Object> {
         if (path.startsWith("[")) {
             path = path.substring(1, path.length() - 1);
         }
-        if ("db-enc-dec".equals(autoTestContext.userTestContext.testProjectName) &&
-                DbTypeEnum.ORACLE.val().equals(autoTestContext.userTestContext.dbEncDecTestDbType)) {
-            path = path.toUpperCase();
-        }
         return JsonPath.read(autoTestContext.getVariableString("__response"), path);
     }
 

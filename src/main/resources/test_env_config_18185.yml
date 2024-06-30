@@ -1,12 +1,4 @@
-cipherPlatform:
-  sm2PubKey: 04DDC4475CA3F84A3E23F276D86E196BADD30DC8DC49B7E5C12C4F5CAC0F76CA50FA9DAFDD13F5173074EF5AE3A8EB53C8872A2B834BC1C3E802714D36EEAB0692
-  sm2PrvKey: 009029F31FD08F35C4B7A0DAA0C284122E7B33C65D26A6F41BD7C094D5E80C6567
-  superAdminUser: super_admin
-  superAdminPassword: 123456
-  superCompanyAdminUser: aaaa
-  superCompanyAdminPassword: 123456
-  defaultApplicationId: 65a8f41dfd98fc576cc19886
-  defaultApplicationSecret: 7PxCsdsLOKMadF87K8SSXrlbbK6LPo63
+platform:
   master:
     serverIp: 192.168.18.185
     serverAdminPort: 8443
@@ -14,9 +6,9 @@ cipherPlatform:
     rootPassword: 123456
 
 datasource:
-  cipherPlatform:
-    username: cipherPlatform
-    password: q7SREqPxTTDZ6ZZ$
+  platform:
+    username: rot
+    password: 123456
     jdbcUrl: jdbc:mysql://192.168.18.185:3306/cipher_platform_metadata?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
     driverClassName: com.mysql.cj.jdbc.Driver
     maxPoolSize: 300
