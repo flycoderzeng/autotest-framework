@@ -3,7 +3,6 @@ package com.autotest.framework.jdbc;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSONObject;
 import com.autotest.framework.common.entities.JdbcConfig;
-import com.autotest.framework.context.UserTestContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -11,9 +10,8 @@ import java.sql.SQLException;
 
 @Slf4j
 public class JdbcDataSource extends BaseDataSource {
-    public UserTestContext userTestContext;
-    public Boolean isInit = false;
-    private JdbcConfig jdbcConfig;
+    private Boolean isInit = false;
+    private final JdbcConfig jdbcConfig;
 
     public JdbcDataSource(JdbcConfig jdbcConfig) {
         this.jdbcConfig = jdbcConfig;
@@ -41,7 +39,7 @@ public class JdbcDataSource extends BaseDataSource {
         dataSource.setMinIdle(1);
         // 配置获取连接等待超时的时间，单位毫秒。
         dataSource.setMaxWait(60000);
-        if (jdbcConfig.getJdbcUrl().toLowerCase().indexOf("oracle") > -1) {
+        if (jdbcConfig.getJdbcUrl().toLowerCase().contains("oracle")) {
             dataSource.setValidationQuery("select 1 from dual");
         } else {
             dataSource.setValidationQuery("select 1");
