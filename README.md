@@ -16,3 +16,9 @@ new BaseAutoCaseBuilder(UserTestContext.getInstance())
     .run();
 ```
 
+#### 依赖
+- Python 3.11.9以上
+- 安装xeger模块
+```xeger
+pip install xeger -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+```
