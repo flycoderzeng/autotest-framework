@@ -5,7 +5,6 @@ import cn.hutool.setting.yaml.YamlUtil;
 import com.autotest.framework.builder.BaseAutoCaseBuilder;
 import com.autotest.framework.context.UserTestContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -17,7 +16,6 @@ import java.util.concurrent.TimeoutException;
 import static com.autotest.framework.utils.PairwiseTestUtils.*;
 
 @Slf4j
-@SpringBootTest(classes = {PairwiseTest.class})
 public class PairwiseTest {
     public Dict dictAddMetadata;
     public Dict dictUpdateMetadata;

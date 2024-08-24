@@ -13,7 +13,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import nl.flotsam.xeger.Xeger;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -26,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.autotest.framework.utils.PairwiseTestUtils.randomStringByRegex;
 
 @Slf4j
 @Data
@@ -128,8 +129,7 @@ public abstract class StepNode {
                     src = src.replace("#{" + expr + "}", autoTestContext.getGlobalVariableString(expr));
                 }
                 if (type == 3) {
-                    Xeger generator = new Xeger(expr);
-                    src = src.replace("@/" + expr + "/", generator.generate());
+                    src = src.replace("@/" + expr + "/", randomStringByRegex(expr));
                 }
                 if (type == 4) {
                     src = src.replace("%{" + expr + "}", autoTestContext.getVariableString(expr));

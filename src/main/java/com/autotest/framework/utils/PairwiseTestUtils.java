@@ -14,7 +14,6 @@ import com.autotest.framework.common.entities.autotest.ModelDataDefine;
 import com.autotest.framework.context.UserTestContext;
 import com.autotest.framework.nodes.StepNode;
 import com.jayway.jsonpath.JsonPath;
-import com.mifmif.common.regex.Generex;
 import lombok.extern.slf4j.Slf4j;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -50,6 +49,8 @@ public class PairwiseTestUtils {
     public static final String PARAMETER_VALUE_NON_MAX_PLUS = "~MAX_PLUS";
     public static final String PARAMETER_VALUE_NON_MIN_SUB = "~MIN_SUB";
     public static final String PARAMETER_VALUE_NON_ENUM_INVALID = "~ENUM_INVALID";
+
+    public static final String RANDOM_STRING_PY_PATH = getFilePathWithName("random_string.py");
 
     private PairwiseTestUtils() {
 
@@ -415,8 +416,7 @@ public class PairwiseTestUtils {
             if(StringUtils.equals(fieldAbstractValue, "VALID")) {
                 if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
                     if(StringUtils.isNoneBlank(fieldDefine.getRegex())) {
-                        Generex generex = new Generex(fieldDefine.getRegex());
-                        fieldTrueValue = generex.random();
+                        fieldTrueValue = randomStringByRegex(fieldDefine.getRegex());
                     }else if(fieldDefine.getMaxLength() != null) {
                         fieldTrueValue = RandomStringUtils.random(fieldDefine.getMaxLength(), SEEDS);
                     }
@@ -438,8 +438,7 @@ public class PairwiseTestUtils {
             }
             if(StringUtils.equals(fieldAbstractValue, "~INVALID") && StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_STRING)) {
                     if(StringUtils.isNoneBlank(fieldDefine.getRegex())) {
-                        Generex generex = new Generex(fieldDefine.getRegex());
-                        fieldTrueValue = StringUtils.reverse(generex.random());
+                        fieldTrueValue = StringUtils.reverse(randomStringByRegex(fieldDefine.getRegex()));
                         fieldValues.put(CASE_DESCRIPTION, fieldName + " 不符合配置的正则表达式");
                     }else if(fieldDefine.getMaxLength() != null) {
                         fieldTrueValue = RandomStringUtils.random(fieldDefine.getMaxLength() + 1, SEEDS);
@@ -520,5 +519,19 @@ public class PairwiseTestUtils {
             return files.get(0).getAbsolutePath();
         }
         return null;
+    }
+
+    public static String randomStringByRegex(String regex) {
+        try {
+            return new ProcessExecutor().command("python", RANDOM_STRING_PY_PATH, regex)
+                    .readOutput(true).execute()
+                    .outputUTF8();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
