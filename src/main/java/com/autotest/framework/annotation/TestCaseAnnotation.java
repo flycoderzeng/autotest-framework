@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface TestCaseAnnotation {
-    public String caseId() default "";
+    public String[] caseIds() default {};
 }

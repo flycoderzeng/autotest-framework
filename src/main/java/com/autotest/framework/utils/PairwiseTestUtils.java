@@ -9,6 +9,7 @@ import com.alibaba.fastjson2.JSON;
 import com.autotest.framework.antlr.constraint.core.ConstraintsLexer;
 import com.autotest.framework.antlr.constraint.core.ConstraintsParser;
 import com.autotest.framework.antlr.constraint.visitor.ConstraintsVisitor;
+import com.autotest.framework.builder.BaseAutoCaseBuilder;
 import com.autotest.framework.common.entities.autotest.FieldDefine;
 import com.autotest.framework.common.entities.autotest.ModelDataDefine;
 import com.autotest.framework.context.UserTestContext;
@@ -37,6 +38,7 @@ public class PairwiseTestUtils {
     public static final String PICT_FOLDER_DIR = System.getProperty("user.home") + "/.pict/";
     protected static final Map<String, FieldDefine> FIELD_DEFINE_MAP = new HashMap<>();
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
+    public static final String REPEAT_RESULT = "__REPEAT_RESULT";
     public static final String CASE_DESCRIPTION = "__CASE_DESCRIPTION";
     public static final String PARAMETER_TYPE_ARRAY = "array";
     public static final String PARAMETER_TYPE_OBJECT = "object";
@@ -237,9 +239,18 @@ public class PairwiseTestUtils {
             group.put(EXPECTED_RESULT, "fail");
         }
         distinctList.addAll(constraintCounterexampleList);
-
-        log.info("组合数: {}", distinctList.size());
-        log.info("组合详情: {}", JSON.toJSONString(distinctList));
+        distinctList.addAll(constraintCounterexampleList);
+        if(dict.getByPath("repeat") != null && StringUtils.isNoneBlank(dict.getByPath("repeat").toString())) {
+            for (LinkedHashMap group : distinctList) {
+                if (StringUtils.equals(group.get(EXPECTED_RESULT).toString(), "success")) {
+                    String jsonString = JSON.toJSONString(group);
+                    LinkedHashMap copiedMap = JSON.parseObject(jsonString, LinkedHashMap.class);
+                    copiedMap.put(REPEAT_RESULT, dict.getByPath("repeat"));
+                    distinctList.add(copiedMap);
+                    break;
+                }
+            }
+        }
 
         return distinctList;
     }
@@ -526,12 +537,43 @@ public class PairwiseTestUtils {
             return new ProcessExecutor().command("python", RANDOM_STRING_PY_PATH, regex)
                     .readOutput(true).execute()
                     .outputUTF8();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
+        } catch (IOException | InterruptedException | TimeoutException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void runGroup(Map<String, String> row, Dict dictApiDefine, String apiName, String uri, String bodyTemplate, UserTestContext autoTestContext) throws Exception {
+        Map<String, Object> fieldValues = getFieldValues(dictApiDefine, row);
+        String expectedResult = (String) fieldValues.get(EXPECTED_RESULT);
+        String repeatResult = (String) fieldValues.get(REPEAT_RESULT);
+        String isRepeat = "no";
+        if (row.containsKey(REPEAT_RESULT)) {
+            isRepeat = "yes";
+        }
+        log.info("预期结果: {}", expectedResult);
+        log.info("用例描述: {}", row.get(CASE_DESCRIPTION));
+
+        new BaseAutoCaseBuilder(autoTestContext)
+                .updateVariable(fieldValues)
+                .updateVariable("expectedResult", expectedResult)
+                .updateVariable("isRepeat", isRepeat)
+                .updateVariable("repeatResult", repeatResult)
+                .post(apiName, uri, bodyTemplate)
+                .beginIf("如果预期成功", "${expectedResult} == 'success'")
+                .assertSuccess()
+                .endIf("预期成功结束")
+                .beginIf("如果预期失败", "${expectedResult} == 'fail'")
+                .assertFail()
+                .endIf("预期失败结束")
+                .beginIf("重放开始", "${isRepeat} == 'yes'")
+                .post("重放请求", uri, "${__request}")
+                .beginIf("如果预期成功", "${repeatResult} == 'success'")
+                .assertSuccess()
+                .endIf("预期成功结束")
+                .beginIf("如果预期失败", "${repeatResult} == 'fail'")
+                .assertFail()
+                .endIf("预期失败结束")
+                .endIf("重放结束")
+                .run();
     }
 }

@@ -21,16 +21,15 @@ public class UserTestContext {
     private final JdbcDataSourceFactory jdbcDataSourceFactory = JdbcDataSourceFactory.getInstance();
     // 全局变量
     public Map<String, Object> variables = new HashMap<>();
-    @Getter
-    public String testEnvName;
+    public static String testEnvName;
     // 应用配置文件application.yml
-    public Dict applicationVariablesDict;
+    public static Dict applicationVariablesDict;
     // 环境配置文件 test_env_config_xxx.yml
-    public Dict testVariablesDict;
+    public static Dict testVariablesDict;
 
-    public String platformMasterServerIp;
-    public String platformMasterServerAdminPort;
-    public String platformMasterRootPassword;
+    public static String platformMasterServerIp;
+    public static String platformMasterServerAdminPort;
+    public static String platformMasterRootPassword;
 
     public static UserTestContext getInstance() {
         if(userTestContext == null) {
@@ -81,15 +80,15 @@ public class UserTestContext {
         testVariablesDict = YamlUtil.loadByPath(path);
         Object objectServerIp = testVariablesDict.getByPath("platform.master.serverIp");
         if(objectServerIp != null) {
-            this.platformMasterServerIp = objectServerIp.toString();
+            platformMasterServerIp = objectServerIp.toString();
         }
         Object objectServerAdminPort = testVariablesDict.getByPath("platform.master.serverPort");
         if(objectServerAdminPort != null) {
-            this.platformMasterServerAdminPort = objectServerAdminPort.toString();
+            platformMasterServerAdminPort = objectServerAdminPort.toString();
         }
         Object objectRootPassword = testVariablesDict.getByPath("platform.master.rootPassword");
         if(objectServerAdminPort != null) {
-            this.platformMasterRootPassword = objectRootPassword.toString();
+            platformMasterRootPassword = objectRootPassword.toString();
         }
     }
 
@@ -124,5 +123,22 @@ public class UserTestContext {
 
     public Object getTestConfig(String path) {
         return testVariablesDict.getByPath(path);
+    }
+
+    public void setTestVariableDict(String key, Object value) {
+        setValueByPath(testVariablesDict, key, value);
+    }
+
+    public void setValueByPath(Map<String, Object> map, String path, Object value) {
+        String[] keys = path.split("\\.");
+        Map<String, Object> currentMap = map;
+        for (int i = 0; i < keys.length - 1; i++) {
+            String key = keys[i];
+            if (!currentMap.containsKey(key)) {
+                currentMap.put(key, new HashMap<>());
+            }
+            currentMap = (Map<String, Object>) currentMap.get(key);
+        }
+        currentMap.put(keys[keys.length - 1], value);
     }
 }

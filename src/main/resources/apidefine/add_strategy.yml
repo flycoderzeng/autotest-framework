@@ -1,4 +1,5 @@
 description: "添加安全策略"
+repeat: fail
 type: object
 required:
   - applicationId
