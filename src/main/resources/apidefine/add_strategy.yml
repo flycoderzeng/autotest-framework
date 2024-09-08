@@ -32,19 +32,11 @@ properties:
         type: string
         enums:
           - SM4
-          - AES
-          - FPE
-          - SM4-DEM-NUM
-          - SM4-DEM-CHAR
-          - SM4-DEM-NUM-HEAD
-          - SM4-DEM-CHAR-HEAD
-          - FPE-HEAD
       secretKeyCode:
         description: "密钥id"
         type: string
         enums:
           - ${modelData.secretKeySm4}
-          - ${modelData.secretKeyAes}
       typeCode:
         description: "敏感类型"
         type: string
@@ -69,10 +61,6 @@ properties:
         enums:
           - 1 # 扩展加密字段
           - 0 # 不扩展加密字段
-      columnFormat:
-        description: "格式"
-        type: string
-        maxLength: 100
   hashPolicy:
     description: "加密策略"
     type: object
@@ -110,35 +98,27 @@ properties:
         enums:
           - 1
 constraints:
-  - IF [encryptPolicy.encryptAlgorithm] = "FPE" THEN [encryptPolicy.typeCode] IN {"120"}
-  - IF [encryptPolicy.encryptAlgorithm] = "FPE-HEAD" THEN [encryptPolicy.typeCode] IN {"120"}
-  - IF [encryptPolicy.encryptAlgorithm] = "AES" THEN [encryptPolicy.secretKeyCode] IN {"${modelData.secretKeyAes}"}
-  - IF [encryptPolicy.encryptAlgorithm] <> "AES" THEN [encryptPolicy.secretKeyCode] <> "${modelData.secretKeyAes}"
   - IF [hashPolicy.hashAlgorithm] = "HMAC-SM3" THEN [hashPolicy.hashSecretKeyCode] IN {"${modelData.secretKeyHmacSm3}"}
   - IF [hashPolicy.hashAlgorithm] = "HMAC-SHA256" THEN [hashPolicy.hashSecretKeyCode] IN {"${modelData.secretKeyHmacSha256}"}
 
 modelData:
   defaultApplication:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_machine.t_application_info where application_name='zeng-test-app-04'
+    datasource: datasource.platform
+    sql: select * from test.t_application where application_name='zeng-test-app-04'
     extractPath: $.[0].application_id
   metadataVARCHAR:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_metadata.t_database_metadata where column_type='VARCHAR' and del_flag=0 and metadata_structure_id not in (select metadata_structure_id from cipher_platform_metadata.t_database_application_metadata where del_flag=0) ORDER BY RAND() limit 1
+    datasource: datasource.platform
+    sql: select * from test.t_metadata where column_type='VARCHAR' and del_flag=0 and metadata_structure_id not in (select metadata_structure_id from test.t_application_metadata where del_flag=0) ORDER BY RAND() limit 1
     extractPath: $.[0].metadata_structure_id
   secretKeySm4:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_machine.t_secret_key where secret_key_name='zeng-test-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
-    extractPath: $.[0].secret_key_code
-  secretKeyAes:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_machine.t_secret_key where secret_key_name='zeng-test-aes-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
+    datasource: datasource.platform
+    sql: select * from test.t_secret_key where secret_key_name='zeng-test-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
     extractPath: $.[0].secret_key_code
   secretKeyHmacSm3:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_machine.t_secret_key where secret_key_name='zeng-test-hmac-sm3-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
+    datasource: datasource.platform
+    sql: select * from test.t_secret_key where secret_key_name='zeng-test-hmac-sm3-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
     extractPath: $.[0].secret_key_code
   secretKeyHmacSha256:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_machine.t_secret_key where secret_key_name='zeng-test-hmac-sha256-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
+    datasource: datasource.platform
+    sql: select * from test.t_secret_key where secret_key_name='zeng-test-hmac-sha256-key-01' and status='ACTIVE' ORDER BY RAND() limit 1
     extractPath: $.[0].secret_key_code

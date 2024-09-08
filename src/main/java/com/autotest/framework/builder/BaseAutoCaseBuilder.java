@@ -195,7 +195,7 @@ public class BaseAutoCaseBuilder {
     }
 
     public BaseAutoCaseBuilder executePlatformSql(String stepName, String sql) {
-        caseStepQueue.offer(new JdbcStepNode(stepSeqGenerator.incrementAndGet(), stepName, autoTestContext, sql).setDatasourceName("datasource.cipherPlatform"));
+        caseStepQueue.offer(new JdbcStepNode(stepSeqGenerator.incrementAndGet(), stepName, autoTestContext, sql).setDatasourceName("datasource.platform"));
         return this;
     }
 

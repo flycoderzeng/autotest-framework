@@ -88,6 +88,6 @@ constraints:
 
 modelData:
   defaultMetadata:
-    datasource: datasource.cipherPlatform
-    sql: select * from cipher_platform_metadata.t_database_metadata where column_type='VARCHAR' and del_flag=0 and metadata_structure_id not in (select metadata_structure_id from cipher_platform_metadata.t_database_application_metadata where del_flag=0) ORDER BY RAND() limit 1
+    datasource: datasource.platform
+    sql: select * from test.t_metadata where column_type='VARCHAR' and del_flag=0 and metadata_structure_id not in (select metadata_structure_id from test.t_application_metadata where del_flag=0) ORDER BY RAND() limit 1
     extractPath: $.[0].metadata_structure_id

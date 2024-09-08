@@ -21,7 +21,7 @@ public class YmlReadTest {
         System.out.println(filePath);
         UserTestContext userTestContext = UserTestContext.getInstance();
         System.out.println(userTestContext.getTestEnvName());
-        Object byPath = userTestContext.testVariablesDict.getByPath("datasource.cipherPlatform");
+        Object byPath = userTestContext.testVariablesDict.getByPath("datasource.platform");
         System.out.println(JSONObject.parseObject(JSONObject.toJSONString(byPath), JdbcConfig.class));
     }
 }
