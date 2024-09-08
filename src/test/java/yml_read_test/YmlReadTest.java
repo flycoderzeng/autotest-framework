@@ -19,9 +19,8 @@ public class YmlReadTest {
         String filePath = file.getAbsolutePath();
 
         System.out.println(filePath);
-        UserTestContext userTestContext = UserTestContext.getInstance();
-        System.out.println(userTestContext.getTestEnvName());
-        Object byPath = userTestContext.testVariablesDict.getByPath("datasource.platform");
+        System.out.println(UserTestContext.testEnvName);
+        Object byPath = UserTestContext.testVariablesDict.getByPath("datasource.platform");
         System.out.println(JSONObject.parseObject(JSONObject.toJSONString(byPath), JdbcConfig.class));
     }
 }
