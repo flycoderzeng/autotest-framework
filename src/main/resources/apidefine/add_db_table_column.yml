@@ -1,0 +1,48 @@
+description: "添加库表列"
+repeat: fail
+type: object
+required:
+  - databaseName
+  - databaseType
+  - tableName
+  - columnName
+  - columnType
+properties:
+  databaseName:
+    description: "数据库名称"
+    type: string
+    minLength: 1
+    maxLength: 64
+    example: "test"
+  schemaName:
+    description: "数据库模式"
+    type: string
+    minLength: 1
+    maxLength: 64
+    example: "test"
+  databaseType:
+    description: "数据库类型"
+    type: string
+    enums:
+      - MySQL
+    example: "MySQL"
+  tableName:
+    description: "表名称"
+    type: string
+    minLength: 1
+    maxLength: 120
+    example: "test_users"
+  columnName:
+    description: "字段名称"
+    type: string
+    minLength: 1
+    maxLength: 120
+    example: "card_no"
+  columnType:
+    description: "字段类型"
+    type: string
+    enums:
+      - VARCHAR
+    example: "VARCHAR"
+constraints:
+  - IF [databaseType] = "MySQL" THEN [columnType] IN {"VARCHAR"}
