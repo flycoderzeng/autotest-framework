@@ -13,5 +13,6 @@ public class FieldDefine {
     public Integer max;
     public String example;
     public String regex;
+    public String includeChinese;
     public List<String> enums;
 }

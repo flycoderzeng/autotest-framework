@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class PairwiseTestUtils {
-    public static final String SEEDS = "QWERTYUIOPASDFGHJKLZXCVBNM_qwertyuiopasdfghjklzxcvbnm_1234567890_中文";
+    public static final String SEEDS = "QWERTYUIOPASDFGHJKLZXCVBNM_qwertyuiopasdfghjklzxcvbnm_1234567890";
     public static final String PICT_FOLDER_DIR = System.getProperty("user.home") + "/.pict/";
     protected static final Map<String, FieldDefine> FIELD_DEFINE_MAP = new HashMap<>();
     public static final String EXPECTED_RESULT = "__EXPECTED_RESULT";
@@ -118,7 +118,7 @@ public class PairwiseTestUtils {
             distinctList = distinctList.stream()
                     .collect(Collectors.collectingAndThen(
                             Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(m -> {
-                                String value = ((Map<String, String>) m).get(key);
+                                String value = m.get(key);
                                 if (value.startsWith("~")) {
                                     return "excluded";
                                 }
@@ -430,6 +430,10 @@ public class PairwiseTestUtils {
                         fieldTrueValue = randomStringByRegex(fieldDefine.getRegex());
                     }else if(fieldDefine.getMaxLength() != null) {
                         fieldTrueValue = RandomStringUtils.random(fieldDefine.getMaxLength(), SEEDS);
+                        if(StringUtils.equals(fieldDefine.getIncludeChinese(), "true")) {
+                            fieldTrueValue = RandomStringUtils.random(fieldDefine.getMaxLength() > 3 ? fieldDefine.getMaxLength() - 3 : 0, SEEDS)
+                                    + RandomStringUtils.random(fieldDefine.getMaxLength() > 3 ? 3 : fieldDefine.getMaxLength(), "中文测试");
+                        }
                     }
                 }
                 if(StringUtils.equals(fieldDefine.getType(), PARAMETER_TYPE_INTEGER)) {

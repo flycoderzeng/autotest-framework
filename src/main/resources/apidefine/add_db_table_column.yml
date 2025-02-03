@@ -25,12 +25,14 @@ properties:
     type: string
     enums:
       - MySQL
+      - ${modelData.databaseType}
     example: "MySQL"
   tableName:
     description: "表名称"
     type: string
+    includeChinese: true
     minLength: 1
-    maxLength: 120
+    maxLength: 20
     example: "test_users"
   columnName:
     description: "字段名称"
@@ -46,3 +48,9 @@ properties:
     example: "VARCHAR"
 constraints:
   - IF [databaseType] = "MySQL" THEN [columnType] IN {"VARCHAR"}
+
+modelData:
+  databaseType:
+    dbName: test
+    sql: select * from test.test_table ORDER BY RAND() limit 1
+    extractPath: $.[0].databaseType
