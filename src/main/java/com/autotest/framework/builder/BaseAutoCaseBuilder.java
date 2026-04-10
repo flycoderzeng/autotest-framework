@@ -37,6 +37,11 @@ public class BaseAutoCaseBuilder {
         return this;
     }
 
+    public BaseAutoCaseBuilder cookies(String key, String value) {
+        cookies.add(new HttpCookie(key, value));
+        return this;
+    }
+
     public BaseAutoCaseBuilder bearerTokenVariable(String stepName, String variableName) {
         caseStepQueue.offer(new BearerTokenVariableNode(stepSeqGenerator.incrementAndGet(), stepName, autoTestContext, variableName));
         return this;
