@@ -93,7 +93,11 @@ public class UserTestContext {
 
     public Connection getConnection(String datasourceName) {
         log.info("datasourceName: {}", datasourceName);
-        return jdbcDataSourceFactory.getConnection(getJdbcConfig(datasourceName));
+        JdbcConfig jdbcConfig = getJdbcConfig(datasourceName);
+        if(jdbcConfig == null) {
+            jdbcConfig = getJdbcConfig("datasource." + datasourceName);
+        }
+        return jdbcDataSourceFactory.getConnection(jdbcConfig);
     }
 
     public void putVariableObject(String key, Object value) {

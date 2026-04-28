@@ -12,3 +12,10 @@ datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     maxPoolSize: 50
     minPoolSize: 10
+  test:
+    username: root
+    password: 123456
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false&useOldAliasMetadataBehavior=false&allowPublicKeyRetrieval=true
+    driverClassName: com.mysql.cj.jdbc.Driver
+    maxPoolSize: 50
+    minPoolSize: 10

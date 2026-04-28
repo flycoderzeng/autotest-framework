@@ -39,6 +39,9 @@ public class JdbcDataSource extends BaseDataSource {
         dataSource.setMinIdle(1);
         // 配置获取连接等待超时的时间，单位毫秒。
         dataSource.setMaxWait(60000);
+        dataSource.setConnectionErrorRetryAttempts(3);
+        dataSource.setTimeBetweenEvictionRunsMillis(1000);
+        dataSource.setBreakAfterAcquireFailure(true);
         if (jdbcConfig.getJdbcUrl().toLowerCase().contains("oracle")) {
             dataSource.setValidationQuery("select 1 from dual");
         } else {

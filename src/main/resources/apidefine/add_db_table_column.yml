@@ -25,7 +25,7 @@ properties:
     type: string
     enums:
       - MySQL
-      #- ${modelData.databaseType}
+      - ${modelData.databaseType}
     example: "MySQL"
   tableName:
     description: "表名称"
@@ -51,6 +51,6 @@ constraints:
 
 modelData:
   databaseType:
-    dbName: test
+    datasource: test
     sql: select * from test.test_table ORDER BY RAND() limit 1
-    extractPath: $.[0].databaseType
+    extractPath: $.[0].database_type
