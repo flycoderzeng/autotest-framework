@@ -1,0 +1,30 @@
+description: "添加权限"
+repeat: success
+type: object
+required:
+  - userId
+  - rightIds_0
+  - rightIds_1
+properties:
+  userId:
+    description: "用户id"
+    type: string
+    minLength: 10
+    maxLength: 64
+    example: "test"
+  rightIds_0:
+    description: "权限id"
+    type: string
+    minLength: 10
+    maxLength: 64
+    example: "test"
+  rightIds_1:
+    description: "权限id"
+    type: string
+    minLength: 10
+    maxLength: 64
+    example: "test"
+
+constraints:
+  - IF [rightIds_0] <> "VALID" THEN [rightIds_1] = "VALID"
+  - IF [rightIds_1] <> "VALID" THEN [rightIds_0] = "VALID"
