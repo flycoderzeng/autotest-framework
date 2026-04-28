@@ -46,6 +46,15 @@ public class PairwiseUserAddTest {
                 .run();
     }
 
+    @Test(testName = "测试添加用户", dataProvider = "allAddUserRows")
+    public void testAddUserRights2(Map<String, String> row) throws Exception {
+        runGroup(row, dictAddUser, "添加用户", "/user/addUsers", """
+                        {
+                            "userList": [{"name":"${$.userList_0_name}", "sex":"${$.userList_0_sex}"}]
+                        }
+                        """, UserTestContext.getInstance());
+    }
+
     @DataProvider(name = "allAddUserRows")
     public Object[][] getAllAddUserRows() throws Exception {
         return getApiProviderObjects("add_users.yml");

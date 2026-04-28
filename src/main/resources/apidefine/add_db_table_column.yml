@@ -25,7 +25,7 @@ properties:
     type: string
     enums:
       - MySQL
-      - ${modelData.databaseType}
+      #- ${modelData.databaseType}
     example: "MySQL"
   tableName:
     description: "表名称"

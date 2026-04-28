@@ -239,7 +239,6 @@ public class PairwiseTestUtils {
             group.put(EXPECTED_RESULT, "fail");
         }
         distinctList.addAll(constraintCounterexampleList);
-        distinctList.addAll(constraintCounterexampleList);
         if(dict.getByPath("repeat") != null && StringUtils.isNoneBlank(dict.getByPath("repeat").toString())) {
             for (LinkedHashMap group : distinctList) {
                 if (StringUtils.equals(group.get(EXPECTED_RESULT).toString(), "success")) {
